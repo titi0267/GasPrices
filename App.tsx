@@ -1,8 +1,13 @@
 import React from 'react';
-import Main from './src';
+import {NavigationContainer} from '@react-navigation/native';
+import TabBarNavigation from './src/Navigation';
 
 const App = (): JSX.Element => {
-  return <Main />;
+  return (
+    <NavigationContainer>
+      <TabBarNavigation />
+    </NavigationContainer>
+  );
 };
 
 export default App;
