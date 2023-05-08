@@ -14,15 +14,8 @@ const fetchGeoCodingResults = async (
   });
 
   if (!res.ok) throw Error('Error on geocoding services');
-  console.log(res.ok);
   const resolve = await res.json();
-  //   let uniqueChars: any = [];
-  //   resolve.forEach((c: any) => {
-  //     if (!uniqueChars.includes(c.id)) {
-  //       uniqueChars.push(c);
-  //     }
-  //   });
-  //   console.log(uniqueChars);
+
   setLoading(resolve);
 };
 
