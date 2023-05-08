@@ -2,10 +2,15 @@ import MapboxGl, {Camera} from '@rnmapbox/maps';
 import Itinerary from '../Itinerary';
 import {useState, useEffect} from 'react';
 import goThroughItinerary from './DepartmentCodes';
+import GasStations from './GasStations';
+import Points from './GasStations/Points';
+import RefineGasStations from './GasStations/Refine';
 
 const Map = (props: {camera: any; start: any; end: any}) => {
   const [departmentCodes, setDepartmentCodes] = useState<string[]>([]);
   const [itinerary, setItinerary] = useState<any>(null);
+  const [gasStations, setGasStations] = useState<any[]>([]);
+  const [refineGasStations, setRefineGasStations] = useState<any[]>([]);
 
   useEffect(() => {
     if (itinerary) {
@@ -16,8 +21,22 @@ const Map = (props: {camera: any; start: any; end: any}) => {
     }
   }, [itinerary]);
   useEffect(() => {
-    console.log(departmentCodes);
+    if (departmentCodes) {
+      console.log(departmentCodes);
+
+      GasStations({
+        departmentCodes: departmentCodes,
+        setGasStations: setGasStations,
+        gasStations: gasStations,
+      });
+    }
   }, [departmentCodes]);
+  RefineGasStations({
+    itinerary: itinerary,
+    gasStations: gasStations,
+    setRefineGasStations: setRefineGasStations,
+  });
+
   return (
     <MapboxGl.MapView
       style={{height: '100%', width: '100%'}}
@@ -35,6 +54,7 @@ const Map = (props: {camera: any; start: any; end: any}) => {
         setItinerary={setItinerary}
         setDepartmentCodes={setDepartmentCodes}
       />
+      {Points({refineGasStations: refineGasStations})}
     </MapboxGl.MapView>
   );
 };

@@ -9,10 +9,8 @@ const goThroughItinerary = async (props: {
   let dataToCheck = props.data.geometry.coordinates.length / 100;
   if (dataToCheck > 10) {
     dataToCheck = dataToCheck / 2;
-    interval /= 2;
-    console.log(interval);
+    interval *= 2;
   }
-  console.log(dataToCheck);
 
   if (dataToCheck <= 1) {
     const resStart = await fetchDepartmentCode({
@@ -39,7 +37,7 @@ const goThroughItinerary = async (props: {
         coords: props.data.geometry.coordinates[i * interval],
       });
       if (!res.ok) {
-        continue;
+        return;
       }
       try {
         const dataResult = await res.json();
