@@ -2,10 +2,12 @@ import MapboxGl, {Camera} from '@rnmapbox/maps';
 import Itinerary from '../Itinerary';
 import {useState, useEffect} from 'react';
 import goThroughItinerary from './DepartmentCodes';
+import GasStations from './GasStations';
 
 const Map = (props: {camera: any; start: any; end: any}) => {
   const [departmentCodes, setDepartmentCodes] = useState<string[]>([]);
   const [itinerary, setItinerary] = useState<any>(null);
+  const [gasStations, setGasStations] = useState<any[]>([]);
 
   useEffect(() => {
     if (itinerary) {
@@ -16,8 +18,19 @@ const Map = (props: {camera: any; start: any; end: any}) => {
     }
   }, [itinerary]);
   useEffect(() => {
-    console.log(departmentCodes);
+    if (departmentCodes) {
+      console.log(departmentCodes);
+
+      GasStations({
+        departmentCodes: departmentCodes,
+        setGasStations: setGasStations,
+        gasStations: gasStations,
+      });
+    }
   }, [departmentCodes]);
+  useEffect(() => {
+    console.log(gasStations);
+  }, [gasStations]);
   return (
     <MapboxGl.MapView
       style={{height: '100%', width: '100%'}}
