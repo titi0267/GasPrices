@@ -70,7 +70,10 @@ const Search = ({navigation}: any) => {
             width: '80%',
           }}
           onPress={() => {
-            navigation.navigate('Home');
+            navigation.navigate('Home', {
+              start: selectStart,
+              end: selectEnd,
+            });
           }}>
           <Text>Lancer la recherche</Text>
         </TouchableOpacity>
