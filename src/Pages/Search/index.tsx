@@ -21,7 +21,6 @@ const Search = ({navigation}: any) => {
 
   useEffect(() => {
     setSearchEnd(selectEnd.label);
-    console.log(selectEnd);
   }, [selectEnd]);
   return (
     <View>
