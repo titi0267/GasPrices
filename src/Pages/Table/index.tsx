@@ -1,6 +1,15 @@
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
+import {
+  Table,
+  TableWrapper,
+  Row,
+  Rows,
+  Col,
+  Cols,
+  Cell,
+} from 'react-native-table-component';
 
 const Item = ({item}: any) => {
   if (item) {
@@ -22,8 +31,10 @@ const HeaderComponent = () => {
   );
 };
 
-const Table = () => {
+const TableComponent = () => {
   const [gasStations, setGasStations] = useState([]);
+  const [tableHeader, setTableHeader] = useState(['Adresse']);
+  const [selectGasStations, setSelectGasStations] = useState<[any[]]>([[]]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -45,14 +56,38 @@ const Table = () => {
       .refineGasStations,
   ]);
 
+  useEffect(() => {
+    setSelectGasStations([]);
+    setTableHeader(['Ville', 'Adresse', 'e10', 'Itineraire']);
+  }, [gasStations]);
+
+  useEffect(() => {
+    const array: [any[]] = [[]];
+    const sortedGasStations = gasStations.sort((a, b) => {
+      return a.fields.e10_prix - b.fields.e10_prix;
+    });
+    for (let i = 0; i < gasStations.length; i++) {
+      array.push([
+        sortedGasStations[i].fields?.ville,
+        sortedGasStations[i].fields?.adresse,
+        sortedGasStations[i].fields?.e10_prix,
+        'Aller ici',
+      ]);
+    }
+    setSelectGasStations(array);
+  }, [tableHeader]);
   return (
-    <View>
-      <FlatList
-        data={gasStations}
-        ListHeaderComponent={<HeaderComponent />}
-        renderItem={({item}) => <Item item={item} />}></FlatList>
-    </View>
+    <ScrollView>
+      <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
+        <Row
+          data={tableHeader}
+          style={{height: 40, backgroundColor: '#f1f8ff'}}
+          textStyle={{margin: 6}}
+        />
+        <Rows data={selectGasStations} textStyle={{margin: 6}}></Rows>
+      </Table>
+    </ScrollView>
   );
 };
 
-export default Table;
+export default TableComponent;
