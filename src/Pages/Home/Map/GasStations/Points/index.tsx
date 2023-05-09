@@ -3,7 +3,6 @@ import {View} from 'react-native';
 import {useEffect} from 'react';
 
 const Point = (props: {gasStation: any}) => {
-  console.log(props.gasStation.recordid);
   return (
     <MapboxGl.PointAnnotation
       id={props.gasStation.recordid}
@@ -27,12 +26,10 @@ const renderPoints = (props: {refineGasStations: any[]}) => {
   const points = [];
 
   if (props.refineGasStations) {
-    console.log(props.refineGasStations.length);
     for (let i = 0; i < props.refineGasStations.length; i++) {
       points.push(Point({gasStation: props.refineGasStations[i]}));
     }
   }
-  console.log(points.length);
   return points;
 };
 

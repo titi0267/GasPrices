@@ -4,8 +4,9 @@ import Map from './Map';
 import {Camera} from '@rnmapbox/maps';
 import {useEffect, useRef, useState} from 'react';
 import Itinerary from './Itinerary';
+import {useIsFocused} from '@react-navigation/native';
 
-const Home = ({route}: any) => {
+const Home = ({navigation, route}: any) => {
   const camera = useRef<Camera>();
 
   useEffect(() => {
@@ -15,7 +16,6 @@ const Home = ({route}: any) => {
       zoomLevel: 3.5,
     });
   }, []);
-
   if (route.params && route.params.start && route.params.end) {
     return (
       <View>

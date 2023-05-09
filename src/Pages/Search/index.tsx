@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import CustomList from './Results';
 import fetchGeoCodingResults from '../../services/geoCoding.service';
 import SelectResult from './SelectResult';
+import {useIsFocused} from '@react-navigation/native';
 
 type ListProp = {id: string; label: string};
 
@@ -72,6 +73,7 @@ const Search = ({navigation}: any) => {
             navigation.navigate('Home', {
               start: selectStart,
               end: selectEnd,
+              isLoading: true,
             });
           }}>
           <Text>Lancer la recherche</Text>
