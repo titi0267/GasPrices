@@ -12,7 +12,12 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 
-const Map = (props: {camera: any; start: any; end: any}) => {
+const Map = (props: {
+  camera: any;
+  start: any;
+  end: any;
+  gasSelected: string;
+}) => {
   const [departmentCodes, setDepartmentCodes] = useState<string[]>([]);
   const [itinerary, setItinerary] = useState<any>(null);
   const [gasStations, setGasStations] = useState<any[]>([]);
@@ -54,7 +59,10 @@ const Map = (props: {camera: any; start: any; end: any}) => {
 
   useEffect(() => {
     if (refineGasStations) {
-      navigation.setParams({refineGasStations: refineGasStations});
+      navigation.setParams({
+        refineGasStations: refineGasStations,
+        gasSelected: props.gasSelected,
+      });
     }
   }, [refineGasStations]);
 

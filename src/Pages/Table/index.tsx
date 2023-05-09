@@ -35,6 +35,7 @@ const TableComponent = () => {
   const [gasStations, setGasStations] = useState([]);
   const [tableHeader, setTableHeader] = useState(['Adresse']);
   const [selectGasStations, setSelectGasStations] = useState<[any[]]>([[]]);
+  const [selectedGas, setSelectedGas] = useState('');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -42,13 +43,13 @@ const TableComponent = () => {
       navigation.getState().routes.find(route => route.name == 'Home')?.params
         .refineGasStations.length != 0
     ) {
-      console.log(
-        navigation.getState().routes.find(route => route.name == 'Home')?.params
-          .refineGasStations,
-      );
       setGasStations(
         navigation.getState().routes.find(route => route.name == 'Home')?.params
           .refineGasStations,
+      );
+      setSelectedGas(
+        navigation.getState().routes.find(route => route.name == 'Home')?.params
+          .gasSelected,
       );
     }
   }, [
@@ -58,21 +59,28 @@ const TableComponent = () => {
 
   useEffect(() => {
     setSelectGasStations([]);
-    setTableHeader(['Ville', 'Adresse', 'e10', 'Itineraire']);
+    setTableHeader([
+      'Ville',
+      'Adresse',
+      selectedGas.split('_')[0],
+      // 'Itineraire',
+    ]);
   }, [gasStations]);
 
   useEffect(() => {
     const array: [any[]] = [[]];
+    console.log(gasStations);
     const sortedGasStations = gasStations.sort((a, b) => {
-      return a.fields.e10_prix - b.fields.e10_prix;
+      return a.fields[selectedGas] - b.fields[selectedGas];
     });
     for (let i = 0; i < gasStations.length; i++) {
-      array.push([
-        sortedGasStations[i].fields?.ville,
-        sortedGasStations[i].fields?.adresse,
-        sortedGasStations[i].fields?.e10_prix,
-        'Aller ici',
-      ]);
+      if (sortedGasStations[i].fields[selectedGas])
+        array.push([
+          sortedGasStations[i].fields?.ville,
+          sortedGasStations[i].fields?.adresse,
+          sortedGasStations[i].fields[selectedGas],
+          // 'Aller ici',
+        ]);
     }
     setSelectGasStations(array);
   }, [tableHeader]);

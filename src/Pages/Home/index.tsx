@@ -23,13 +23,14 @@ const Home = ({navigation, route}: any) => {
           camera={camera}
           start={route.params.start.geometry}
           end={route.params.end.geometry}
+          gasSelected={route.params.selectGas as string}
         />
       </View>
     );
   } else {
     return (
       <View>
-        <Map camera={camera} start={null} end={null} />
+        <Map camera={camera} start={null} end={null} gasSelected="" />
       </View>
     );
   }
