@@ -1,29 +1,43 @@
 import MapboxGl, {Camera} from '@rnmapbox/maps';
 import Itinerary from '../Itinerary';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useLayoutEffect} from 'react';
 import goThroughItinerary from './DepartmentCodes';
 import GasStations from './GasStations';
 import Points from './GasStations/Points';
 import RefineGasStations from './GasStations/Refine';
+import {
+  NavigationProp,
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 
-const Map = (props: {camera: any; start: any; end: any}) => {
+const Map = (props: {
+  camera: any;
+  start: any;
+  end: any;
+  gasSelected: string;
+}) => {
   const [departmentCodes, setDepartmentCodes] = useState<string[]>([]);
   const [itinerary, setItinerary] = useState<any>(null);
   const [gasStations, setGasStations] = useState<any[]>([]);
   const [refineGasStations, setRefineGasStations] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation<NavigationProp<any, any>>();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+    console.log('rerender');
     if (itinerary) {
+      setIsLoading(true);
       goThroughItinerary({
         data: itinerary,
         setDepartmentCodes: setDepartmentCodes,
       });
     }
-  }, [itinerary]);
+  }, [itinerary, isFocused]);
   useEffect(() => {
     if (departmentCodes) {
-      console.log(departmentCodes);
-
       GasStations({
         departmentCodes: departmentCodes,
         setGasStations: setGasStations,
@@ -35,7 +49,22 @@ const Map = (props: {camera: any; start: any; end: any}) => {
     itinerary: itinerary,
     gasStations: gasStations,
     setRefineGasStations: setRefineGasStations,
+    setIsLoading: setIsLoading,
   });
+
+  useEffect(() => {
+    navigation.setParams({isLoading: isLoading});
+    console.log('loading at ' + isLoading);
+  }, [isLoading, navigation]);
+
+  useEffect(() => {
+    if (refineGasStations) {
+      navigation.setParams({
+        refineGasStations: refineGasStations,
+        gasSelected: props.gasSelected,
+      });
+    }
+  }, [refineGasStations]);
 
   return (
     <MapboxGl.MapView

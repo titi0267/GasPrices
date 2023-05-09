@@ -1,7 +1,15 @@
 import {View, Image, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import NavigationAssets from '../../AssetsImport/NavigationAssets/NavigationAssets';
+import {useEffect} from 'react';
 
 const NavBar = ({navigation}: any) => {
+  if (
+    navigation.getState().routes.find(route => route.name == 'Home')?.params
+      .isLoading
+  ) {
+    return <></>;
+  }
+
   return (
     <View
       style={{

@@ -1,9 +1,11 @@
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useEffect} from 'react';
 
 const RefineGasStations = (props: {
   itinerary: any;
   gasStations: any;
-  setRefineGasStations: (value: any) => void;
+  setRefineGasStations: (value: any[]) => void;
+  setIsLoading: (value: boolean) => void;
 }) => {
   useEffect(() => {
     if (props.gasStations && props.itinerary) {
@@ -42,6 +44,7 @@ const RefineGasStations = (props: {
         }
       }
       props.setRefineGasStations(myData);
+      props.setIsLoading(false);
     }
   }, [props.gasStations]);
 };
