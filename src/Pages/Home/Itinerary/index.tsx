@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import fetchGeoJsonResults from '../../../services/geoJson.service';
-import MapboxGl from '@rnmapbox/maps';
 import fetchDepartmentCode from '../../../services/departmentCode.service';
 import goThroughItinerary from '../Map/DepartmentCodes';
+import {View} from 'react-native';
 
 const Itinerary = (props: {
   start: any;
@@ -26,12 +26,13 @@ const Itinerary = (props: {
 
   if (props.itinerary) {
     return (
-      <MapboxGl.ShapeSource id="source" shape={props.itinerary}>
-        <MapboxGl.LineLayer
-          id="line"
-          style={{lineColor: 'blue', lineWidth: 3}}
-        />
-      </MapboxGl.ShapeSource>
+      <View></View>
+      // <MapboxGl.ShapeSource id="source" shape={props.itinerary}>
+      //   <MapboxGl.LineLayer
+      //     id="line"
+      //     style={{lineColor: 'blue', lineWidth: 3}}
+      //   />
+      // </MapboxGl.ShapeSource>
     );
   } else {
     return <></>;

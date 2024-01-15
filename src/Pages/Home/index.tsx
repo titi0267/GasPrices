@@ -1,13 +1,12 @@
 import {HOST} from '@env';
 import {View, Text} from 'react-native';
 import Map from './Map';
-import {Camera} from '@rnmapbox/maps';
 import {useEffect, useRef, useState} from 'react';
 import Itinerary from './Itinerary';
 import {useIsFocused} from '@react-navigation/native';
 
 const Home = ({navigation, route}: any) => {
-  const camera = useRef<Camera>();
+  const camera = useRef();
 
   useEffect(() => {
     camera.current?.setCamera({
