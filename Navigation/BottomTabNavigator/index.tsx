@@ -5,6 +5,8 @@ import Map from '../../Pages/Map';
 import Search from '../../Pages/Search';
 import GasPumps from '../../Pages/GasPumps';
 
+
+
 const BottomTabNavigator = createBottomTabNavigator<any>();
 
 const BottomTabNavigation = () => {

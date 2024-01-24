@@ -1,151 +1,169 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
-  Keyboard,
   KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomChip from '../../Components/Chip';
-import CustomModal from '../../src/components/Modal';
+import CustomDropdown from '../../Components/Dropdown';
+import fetchGeoCodingResults from '../../src/services/geoCoding.service';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import getLocation from '../../src/services/getCurrentLocation';
+import {BottomTabParamList, LocationType} from '../../Types';
 
 const Search = () => {
-  const [isChipSelectedE5, setIsChipSelectedE5] = useState(false);
-  const [isChipSelectedE10, setIsChipSelectedE10] = useState(false);
-  const [isChipSelectedGazole, setIsChipSelectedGazole] = useState(false);
-  const [isChipSelectedSP95, setIsChipSelectedSP95] = useState(false);
-  const [isChipSelectedSP98, setIsChipSelectedSP98] = useState(false);
-  const [isChipSelectedEthanol, setIsChipSelectedEthanol] = useState(false);
+  const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
 
-  const resetChipsCallback = (chipType: string) => {
-    console.log(chipType);
-    if (chipType != 'E10') setIsChipSelectedE10(false);
-    else setIsChipSelectedE10(!isChipSelectedE10);
-    if (chipType != 'E5') setIsChipSelectedE5(false);
-    else setIsChipSelectedE5(!isChipSelectedE5);
-    if (chipType != 'SP95') setIsChipSelectedSP95(false);
-    else setIsChipSelectedSP95(!isChipSelectedSP95);
-    if (chipType != 'SP98') setIsChipSelectedSP98(false);
-    else setIsChipSelectedSP98(!isChipSelectedSP98);
-    if (chipType != 'Gazole') setIsChipSelectedGazole(false);
-    else setIsChipSelectedGazole(!isChipSelectedGazole);
-    if (chipType != 'Ethanol') setIsChipSelectedEthanol(false);
-    else setIsChipSelectedEthanol(!isChipSelectedEthanol);
-  };
+  const [startValue, setStartValue] = useState('');
+  const [endValue, setEndValue] = useState('');
+  const [startText, setStartText] = useState('');
+  const [endText, setEndText] = useState('');
+  const [gasTypeValue, setGasTypeValue] = useState('');
+  const [location, setLocation] = useState('');
+  const [isFetchStart, setIsFetchStart] = useState(false);
+  const [isFetchEnd, setIsFetchEnd] = useState(false);
 
-  const renderChips = () => {
-    return (
-      <View style={styles.chipsContainer}>
-        <View style={styles.chipsRow}>
-          <CustomChip
-            isChipSelected={isChipSelectedE5}
-            text="E5"
-            resetChip={resetChipsCallback}></CustomChip>
-          <CustomChip
-            isChipSelected={isChipSelectedE10}
-            text="E10"
-            resetChip={resetChipsCallback}></CustomChip>
-        </View>
-        <View style={styles.chipsRow}>
-          <CustomChip
-            isChipSelected={isChipSelectedGazole}
-            text="Gazole"
-            resetChip={resetChipsCallback}></CustomChip>
-          <CustomChip
-            isChipSelected={isChipSelectedSP95}
-            text="SP95"
-            resetChip={resetChipsCallback}></CustomChip>
-        </View>
-        <View style={styles.chipsRow}>
-          <CustomChip
-            isChipSelected={isChipSelectedSP98}
-            text="SP98"
-            resetChip={resetChipsCallback}></CustomChip>
-          <CustomChip
-            isChipSelected={isChipSelectedEthanol}
-            text="Ethanol"
-            resetChip={resetChipsCallback}></CustomChip>
-        </View>
-      </View>
-    );
+  const setLocationCallback = (value: LocationType | string) => {
+    setLocation(value as string);
   };
-  const startInputRef = useRef<TextInput>(null);
-  const endInputRef = useRef<TextInput>(null);
-  const [startModalVisible, setStartModalVisible] = useState<boolean>(false);
-  const [endModalVisible, setEndModalVisible] = useState<boolean>(false);
-  const [startInput, setStartInput] = useState('Depart...');
-  const [endInput, setEndInput] = useState('Arrivee...');
 
   useEffect(() => {
-    if (startModalVisible) {
-      setTimeout(() => {
-        startInputRef.current?.focus();
-      }, 200);
-    }
-  }, [startModalVisible]);
+    getLocation(setLocationCallback, 'string');
+  }, []);
+
+  const gasTypes = [
+    {label: 'E5', value: 'E5'},
+    {label: 'E10', value: 'E10'},
+    {label: 'SP95', value: 'SP95'},
+    {label: 'SP98', value: 'SP98'},
+    {label: 'Gazole', value: 'Gazole'},
+    {label: 'Ethanol', value: 'Ethanol'},
+  ];
+
+  const [startResults, setStartResults] = useState<
+    {label: string; value: string}[]
+  >([]);
+  const [endResults, setEndResults] = useState<
+    {label: string; value: string}[]
+  >([]);
+
+  const setEndResultsCallback = (value: {label: string; value: string}[]) => {
+    console.log(value.map(item => item.label));
+    setEndResults(value);
+  };
+
+  const setStartResultsCallback = (value: {label: string; value: string}[]) => {
+    setStartResults(value);
+  };
+
+  const setIsFetchStartCallback = (value: boolean) => {
+    setIsFetchStart(value);
+  };
+
+  const setIsFetchEndCallback = (value: boolean) => {
+    setIsFetchEnd(value);
+  };
 
   useEffect(() => {
-    if (endModalVisible) {
-      setTimeout(() => {
-        endInputRef.current?.focus();
-      }, 200);
+    if (location.length != 0) {
+      setEndResults(prevState => [
+        {label: 'Votre position', value: location},
+        ...prevState,
+      ]);
+      setStartResults(prevState => [
+        {label: 'Votre position', value: location},
+        ...prevState,
+      ]);
     }
-  }, [endModalVisible]);
+  }, [location]);
 
-  const setStartModalVisibleCallback = (modalVisible: boolean) => {
-    setStartModalVisible(modalVisible);
-  };
-  const setEndModalVisibleCallback = (modalVisible: boolean) => {
-    setEndModalVisible(modalVisible);
-  };
+  useEffect(() => {
+    if (startText.length >= 3) {
+      fetchGeoCodingResults(
+        {adress: startText},
+        setStartResultsCallback,
+        setIsFetchStartCallback,
+      );
+    }
+  }, [startText]);
+
+  useEffect(() => {
+    if (endText.length >= 3) {
+      fetchGeoCodingResults(
+        {adress: endText},
+        setEndResultsCallback,
+        setIsFetchEndCallback,
+      );
+    }
+  }, [endText]);
 
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView behavior="height" style={styles.centeredView}>
-        <View style={styles.inputContainer}>
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setStartModalVisibleCallback(true)}>
-            <Text style={{color: '#565F64', fontSize: 16}}>{startInput}</Text>
-          </TouchableOpacity>
-          <CustomModal
-            modalVisible={startModalVisible}
-            setModalVisibleCallback={setStartModalVisibleCallback}>
-            <TextInput
-              ref={startInputRef}
-              style={styles.input}
-              placeholder="Depart..."
-              placeholderTextColor="#565F64"
-              onChangeText={text => setStartInput(text)}
+    <View style={[styles.container]}>
+      <KeyboardAvoidingView behavior="padding" style={styles.centeredView}>
+        <View
+          style={{
+            width: '80%',
+            flex: 3,
+            marginTop: 60,
+          }}>
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.legend}>Point de depart :</Text>
+            <CustomDropdown
+              placeholder="Depart"
+              data={startResults}
+              value={startValue}
+              setValue={setStartValue}
+              setText={setStartText}
+              isLoading={isFetchStart}
             />
-          </CustomModal>
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setEndModalVisibleCallback(true)}>
-            <Text style={{color: '#565F64', fontSize: 16}}>{endInput}</Text>
-          </TouchableOpacity>
-          <CustomModal
-            modalVisible={endModalVisible}
-            setModalVisibleCallback={setEndModalVisibleCallback}>
-            <TextInput
-              ref={endInputRef}
-              style={styles.input}
-              placeholder="Arrivee..."
-              placeholderTextColor="#565F64"
-              onChangeText={text => setEndInput(text)}
+          </View>
+          <View style={{marginVertical: 60, alignItems: 'center'}}>
+            <Text style={styles.legend}>Point d'arrivee :</Text>
+            <CustomDropdown
+              placeholder="Arrivee"
+              data={endResults}
+              value={endValue}
+              setValue={setEndValue}
+              setText={setEndText}
+              isLoading={isFetchEnd}
             />
-          </CustomModal>
+          </View>
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.legend}>Type de carburant :</Text>
+            <CustomDropdown
+              placeholder="Carburant"
+              data={gasTypes}
+              value={gasTypeValue}
+              setValue={setGasTypeValue}
+              setText={(text: string) => {}}
+              isLoading={false}
+            />
+          </View>
         </View>
-        {renderChips()}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={styles.button}
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  startValue.length == 0 ||
+                  endValue.length == 0 ||
+                  gasTypeValue.length == 0
+                    ? 'gray'
+                    : '#00A19B',
+              },
+            ]}
+            disabled={
+              startValue.length == 0 ||
+              endValue.length == 0 ||
+              gasTypeValue.length == 0
+            }
             onPress={() => {
-              console.log('search');
+              navigation.navigate('Map', {start: startValue, end: endValue});
             }}>
             <Image
               source={require('../../src/assets/search.png')}
@@ -161,51 +179,19 @@ const Search = () => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  legend: {
+    fontSize: 20,
   },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-  },
-  closeButton: {
-    alignSelf: 'flex-end',
-    padding: 10,
-  },
-  inputContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 2,
-  },
-  input: {
-    backgroundColor: '#C8CCCE',
-    color: '#000000',
-    paddingHorizontal: 16,
-    borderColor: '#00A19B',
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginVertical: 30,
-    width: '90%',
-    borderWidth: 1,
-    height: 50,
-    justifyContent: 'center',
-  },
-  chipsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  chipsRow: {
-    flexDirection: 'row',
-    width: '100%',
-    marginVertical: 7,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    height: 50,
   },
   buttonContainer: {
     flex: 1,
@@ -214,7 +200,6 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#00A19B',
     borderRadius: 8,
     paddingHorizontal: 30,
     justifyContent: 'space-between',

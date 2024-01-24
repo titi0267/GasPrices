@@ -1,6 +1,9 @@
 import {HOST} from '@env';
 
-const fetchDepartmentCode = async (body: {coords: [number, number]}) => {
+const fetchDepartmentCode = async (
+  body: {coords: number[]},
+  // setDepartementCode: (code: (prev: string[]) => string[]) => void,
+): Promise<string> => {
   const res = await fetch(`${HOST}/geoCode`, {
     method: 'POST',
     headers: {
@@ -10,17 +13,31 @@ const fetchDepartmentCode = async (body: {coords: [number, number]}) => {
   });
   if (!res.ok) throw Error('Error on Geo services');
 
-  return res;
-  // console.log(resolve);
-  // if (data == null) {
-  //   setData([resolve]);
-  //   console.log('new ' + resolve);
-  //   return;
-  // }
-  // if (!data.includes(resolve)) {
-  //   setData((array: any) => [...array, resolve]);
-  //   console.log('add ' + resolve);
-  // }
+  const resolve = await res.json();
+
+  return resolve;
 };
 
-export default fetchDepartmentCode;
+const departementsCodes = async (
+  geoJson: {geometry: {coordinates: [number[]]}},
+  setDepartementCode: (code: string[]) => void,
+) => {
+  const code = [];
+  for (let i = 0; i < geoJson.geometry.coordinates.length; i += 500) {
+    const position = geoJson.geometry.coordinates[i];
+
+    if (position) {
+      code.push(await fetchDepartmentCode({coords: position}));
+    }
+  }
+  code.push(
+    await fetchDepartmentCode({
+      coords:
+        geoJson.geometry.coordinates[geoJson.geometry.coordinates.length - 1],
+    }),
+  );
+
+  setDepartementCode([...new Set(code)]);
+};
+
+export default {fetchDepartmentCode, departementsCodes};
