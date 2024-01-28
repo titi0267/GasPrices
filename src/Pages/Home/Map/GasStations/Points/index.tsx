@@ -1,24 +1,20 @@
-import MapboxGl from '@rnmapbox/maps';
-import {View} from 'react-native';
+import {Image, View} from 'react-native';
+import Mapbox from '@rnmapbox/maps';
+
 import {useEffect} from 'react';
 
 const Point = (props: {gasStation: any}) => {
   return (
-    <MapboxGl.PointAnnotation
-      id={props.gasStation.recordid}
-      key={props.gasStation.recordid}
-      coordinate={props.gasStation.geometry.coordinates}>
-      <View
-        style={{
-          height: 30,
-          width: 30,
-          backgroundColor: '#00cccc',
-          borderRadius: 50,
-          borderColor: '#fff',
-          borderWidth: 3,
-        }}
-      />
-    </MapboxGl.PointAnnotation>
+    <View>
+      <Mapbox.PointAnnotation
+        id={props.gasStation.recordid}
+        key={props.gasStation.recordid}
+        coordinate={props.gasStation.geometry.coordinates}>
+        <Image
+          source={require('../../../../../assets/gas-pump.png')}
+          style={{width: 17, height: 17}}></Image>
+      </Mapbox.PointAnnotation>
+    </View>
   );
 };
 
