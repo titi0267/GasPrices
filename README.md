@@ -30,7 +30,7 @@ In order to use Gas Prices, you must have Android studio on your computer ([Inst
    git clone https://github.com/titi0267/GasPrices.git
    ```
 
-2. Add a .env file with the folling fields to the project.
+2. Add a .env file with the following fields to the project.
 
    If you want to use my [Local API](https://github.com/titi0267/GasPrices-Api)
 
