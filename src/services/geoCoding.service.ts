@@ -4,7 +4,15 @@ const fetchGeoCodingResults = async (
   body: {adress: string},
   setResults: (value: {label: string; value: string}[]) => void,
   setLoading: (value: boolean) => void,
+  abortController: React.MutableRefObject<AbortController>,
 ) => {
+  abortController.current.abort();
+
+  const newAbortController = new AbortController();
+  const signal = newAbortController.signal;
+
+  // Update the reference to the new AbortController
+  abortController.current = newAbortController;
   setLoading(true);
   console.log('search query', body.adress);
 
@@ -14,6 +22,7 @@ const fetchGeoCodingResults = async (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
+    signal,
   });
 
   if (!res.ok) throw Error('Error on geocoding services');

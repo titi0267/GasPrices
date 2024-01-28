@@ -1,7 +1,9 @@
-import {useEffect, useRef} from 'react';
+import {forwardRef, useEffect, useImperativeHandle, useRef} from 'react';
 import {
   ActivityIndicator,
+  Button,
   Image,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -9,17 +11,35 @@ import {
   View,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
-import {DropdownProps} from 'react-native-element-dropdown/lib/typescript/components/Dropdown/model';
 
 const CustomDropdown = (props: {
   placeholder: string;
   data: {label: string; value: string}[];
   value: string;
   setValue: (value: string) => void;
-  setText: (text: string) => void;
   isLoading: boolean;
+  setText?: (text: string) => void;
+  text?: string;
+  textInputRef?: React.RefObject<TextInput>;
 }) => {
-  const {placeholder, data, setValue, value, setText, isLoading} = props;
+  const {
+    placeholder,
+    data,
+    setValue,
+    value,
+    setText,
+    isLoading,
+    text,
+    textInputRef,
+  } = props;
+
+  const handleFocusInput = () => {
+    setTimeout(() => {
+      if (textInputRef != undefined && textInputRef.current) {
+        textInputRef.current?.focus();
+      }
+    }, 100);
+  };
 
   return (
     <View style={{width: '90%', marginTop: 10}}>
@@ -29,24 +49,31 @@ const CustomDropdown = (props: {
         itemTextStyle={{color: '#000000'}}
         selectedTextStyle={styles.selectedTextStyle}
         showsVerticalScrollIndicator={true}
-        renderInputSearch={onSearch => (
-          <TextInput
-            onChangeText={text => onSearch(text)}
-            style={styles.inputSearchStyle}
-            placeholderTextColor={'#000000'}
-            placeholder="Rechercher"></TextInput>
-        )}
+        renderInputSearch={onSearch => {
+          return typeof setText === 'function' && text != undefined ? (
+            <TextInput
+              ref={textInputRef}
+              value={text}
+              onChangeText={text => onSearch(text)}
+              style={styles.inputSearchStyle}
+              placeholderTextColor={'#000000'}
+              placeholder="Rechercher"></TextInput>
+          ) : null;
+        }}
         data={data}
         search
+        onFocus={() => {
+          handleFocusInput();
+        }}
         maxHeight={200}
         labelField="label"
         valueField="value"
         placeholder={placeholder}
         value={value}
         onChangeText={text => {
-          setText(text);
+          if (typeof setText === 'function') setText(text);
         }}
-        renderItem={(item, selected) => {
+        renderItem={item => {
           return isLoading ? (
             data.length != 0 && item.label == data[0].label ? (
               <ActivityIndicator size={40}></ActivityIndicator>
@@ -55,7 +82,11 @@ const CustomDropdown = (props: {
             )
           ) : (
             <View style={styles.itemContainer}>
-              <View style={styles.separator}></View>
+              {data.length != 0 &&
+                data[0].value != item.value &&
+                data[0].label != item.label && (
+                  <View style={styles.separator}></View>
+                )}
               <View style={styles.item}>
                 <Text style={styles.itemText}>{item.label}</Text>
               </View>
@@ -63,12 +94,14 @@ const CustomDropdown = (props: {
           );
         }}
         onChange={item => {
+          console.log(item);
           setValue(item.value);
         }}
         renderLeftIcon={() => (
           <TouchableOpacity
             onPress={() => {
               setValue('');
+              if (typeof setText === 'function') setText('');
             }}>
             <Image
               source={require('../../src/assets/close.png')}
@@ -109,7 +142,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     height: 40,
     fontSize: 16,
-    backgroundColor: '#C8CCCE',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#00A19B',
     borderRadius: 8,

@@ -9,7 +9,7 @@ const fetchGasStationList = async (body: {code_department: string}) => {
     body: JSON.stringify(body),
   });
   if (!res.ok) throw Error('Error on gas station services');
-
+  console.log(res);
   const resolve = await res.json();
 
   return resolve.records;
@@ -21,7 +21,6 @@ const gasStations = async (
 ) => {
   const gasStations = [];
   for (let i = 0; i < codes.length; i += 1) {
-    console.log(codes[i]);
     gasStations.push(
       await fetchGasStationList({code_department: codes[i].toString()}),
     );
@@ -47,6 +46,8 @@ function haversineDistance(itinerayCoords: number[], stationCoords: any) {
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
+  if (stationCoords.recordid == '5ee5e8e1650df736ecb75aeabfbd8644f3888d94')
+    console.log('distance =', distance);
   return distance;
 }
 

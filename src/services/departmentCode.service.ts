@@ -1,9 +1,8 @@
 import {HOST} from '@env';
 
-const fetchDepartmentCode = async (
-  body: {coords: number[]},
-  // setDepartementCode: (code: (prev: string[]) => string[]) => void,
-): Promise<string> => {
+const fetchDepartmentCode = async (body: {
+  coords: number[];
+}): Promise<string> => {
   const res = await fetch(`${HOST}/geoCode`, {
     method: 'POST',
     headers: {
@@ -13,9 +12,9 @@ const fetchDepartmentCode = async (
   });
   if (!res.ok) throw Error('Error on Geo services');
 
-  const resolve = await res.json();
+  const resolve = await res.text();
 
-  return resolve;
+  return resolve.toString();
 };
 
 const departementsCodes = async (
@@ -25,7 +24,7 @@ const departementsCodes = async (
   const code = [];
   for (let i = 0; i < geoJson.geometry.coordinates.length; i += 500) {
     const position = geoJson.geometry.coordinates[i];
-
+    console.log(position);
     if (position) {
       code.push(await fetchDepartmentCode({coords: position}));
     }

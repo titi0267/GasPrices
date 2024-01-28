@@ -1,10 +1,18 @@
-import {useEffect, useState} from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import {
   ActivityIndicator,
+  Button,
   Image,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -14,6 +22,7 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import getLocation from '../../src/services/getCurrentLocation';
 import {BottomTabParamList, LocationType} from '../../Types';
+import asyncStorageService from '../../src/services/asyncStorage.service';
 
 const Search = () => {
   const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
@@ -26,6 +35,8 @@ const Search = () => {
   const [location, setLocation] = useState('');
   const [isFetchStart, setIsFetchStart] = useState(false);
   const [isFetchEnd, setIsFetchEnd] = useState(false);
+  const abortController = useRef(new AbortController());
+  const textInputRef = useRef<TextInput>(null);
 
   const setLocationCallback = (value: LocationType | string) => {
     setLocation(value as string);
@@ -36,12 +47,12 @@ const Search = () => {
   }, []);
 
   const gasTypes = [
-    {label: 'E5', value: 'E5'},
-    {label: 'E10', value: 'E10'},
-    {label: 'SP95', value: 'SP95'},
-    {label: 'SP98', value: 'SP98'},
-    {label: 'Gazole', value: 'Gazole'},
-    {label: 'Ethanol', value: 'Ethanol'},
+    {label: 'E85', value: 'e85'},
+    {label: 'E10', value: 'e10'},
+    {label: 'SP95', value: 'sp95'},
+    {label: 'SP98', value: 'sp98'},
+    {label: 'Gazole', value: 'gazole'},
+    {label: 'GPLc', value: 'gplc'},
   ];
 
   const [startResults, setStartResults] = useState<
@@ -52,7 +63,6 @@ const Search = () => {
   >([]);
 
   const setEndResultsCallback = (value: {label: string; value: string}[]) => {
-    console.log(value.map(item => item.label));
     setEndResults(value);
   };
 
@@ -83,21 +93,33 @@ const Search = () => {
 
   useEffect(() => {
     if (startText.length >= 3) {
-      fetchGeoCodingResults(
-        {adress: startText},
-        setStartResultsCallback,
-        setIsFetchStartCallback,
-      );
+      try {
+        fetchGeoCodingResults(
+          {adress: startText},
+          setStartResultsCallback,
+          setIsFetchStartCallback,
+          abortController,
+        );
+      } catch (e) {
+        console.log('Rejected promise', e);
+      }
+      return () => abortController.current.abort();
     }
   }, [startText]);
 
   useEffect(() => {
     if (endText.length >= 3) {
-      fetchGeoCodingResults(
-        {adress: endText},
-        setEndResultsCallback,
-        setIsFetchEndCallback,
-      );
+      try {
+        fetchGeoCodingResults(
+          {adress: endText},
+          setEndResultsCallback,
+          setIsFetchEndCallback,
+          abortController,
+        );
+      } catch (e) {
+        console.log('Rejected promise', e);
+      }
+      return () => abortController.current.abort();
     }
   }, [endText]);
 
@@ -118,7 +140,9 @@ const Search = () => {
               value={startValue}
               setValue={setStartValue}
               setText={setStartText}
+              text={startText}
               isLoading={isFetchStart}
+              textInputRef={textInputRef}
             />
           </View>
           <View style={{marginVertical: 60, alignItems: 'center'}}>
@@ -127,9 +151,11 @@ const Search = () => {
               placeholder="Arrivee"
               data={endResults}
               value={endValue}
+              text={endText}
               setValue={setEndValue}
               setText={setEndText}
               isLoading={isFetchEnd}
+              textInputRef={textInputRef}
             />
           </View>
           <View style={{alignItems: 'center'}}>
@@ -139,7 +165,6 @@ const Search = () => {
               data={gasTypes}
               value={gasTypeValue}
               setValue={setGasTypeValue}
-              setText={(text: string) => {}}
               isLoading={false}
             />
           </View>
@@ -153,7 +178,7 @@ const Search = () => {
                   startValue.length == 0 ||
                   endValue.length == 0 ||
                   gasTypeValue.length == 0
-                    ? 'gray'
+                    ? '#C8CCCE'
                     : '#00A19B',
               },
             ]}
@@ -163,6 +188,7 @@ const Search = () => {
               gasTypeValue.length == 0
             }
             onPress={() => {
+              asyncStorageService.storeGasType(gasTypeValue);
               navigation.navigate('Map', {start: startValue, end: endValue});
             }}>
             <Image
@@ -186,6 +212,7 @@ const styles = StyleSheet.create({
   },
   legend: {
     fontSize: 20,
+    color: '#00A19B',
   },
   centeredView: {
     flex: 1,
