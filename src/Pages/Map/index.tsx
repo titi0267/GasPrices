@@ -216,7 +216,7 @@ const Map = () => {
               width: 30,
               height: 30,
               alignSelf: 'flex-end',
-              marginRight: 25,
+              marginRight: 35,
               top: 33,
               zIndex: 10,
             }}>
