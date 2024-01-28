@@ -32,31 +32,38 @@ In order to use Gas Prices, you must have Android studio on your computer ([Inst
 
 2. Add a .env file with the folling fields to the project.
 
-   If you want to use my [Local API](https://github.com/titi0267/GasPrices-Api)
+   - You can use my hosted Api
 
    ```.env
     HOST=https://gas-price-france-yaws.vercel.app/
    ```
+   OR
 
-   Generate a [Jawg api key](https://www.jawg.io/en/)
+   - You can use it on local, follow [GasPrices-Api](https://github.com/titi0267/GasPrices-Api) guidelines
+     
+   ```.env
+    HOST=http://localhost:8080
+   ```
+
+   - Generate a [Jawg api key](https://www.jawg.io/en/)
 
    ```.env
     JAWG_API_KEY=
    ```
 
-   Generate a [Mapbox api key](https://www.mapbox.com/)
+   - Generate a [Mapbox api key](https://www.mapbox.com/)
 
    ```.env
    MAPBOX_API_KEY=
    ```
 
-3. Install the dependencies with npm
+4. Install the dependencies with npm
 
    ```bash
    npm i
    ```
 
-4. Extra steps for a physical device:
+5. Extra steps for a physical device:
    - Connect your device to your computer
    - Make sure to enable developer mode
    - Make sure to enable file transfert
