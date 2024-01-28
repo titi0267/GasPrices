@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GasPump, GasType} from '../../Types';
+import {GasPump, GasType} from '../Types';
 
 const storeData = async (key: string, value: Array<{}>) => {
   try {
@@ -15,7 +15,6 @@ const storeData = async (key: string, value: Array<{}>) => {
 const storeGasType = async (value: string) => {
   try {
     await AsyncStorage.setItem('gasType', value);
-    console.log('succesfully stored gas type', value);
   } catch (e) {
     console.log('error storing gas type');
   }
@@ -37,7 +36,7 @@ const getData = async (
     const jsonValue = await AsyncStorage.getItem(key);
     setData(jsonValue != null ? JSON.parse(jsonValue) : null);
   } catch (e) {
-    console.log('error rdg value');
+    console.log('error reading value');
   }
 };
 

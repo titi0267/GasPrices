@@ -1,138 +1,248 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {SearchBar, ListItem} from '@rneui/themed';
-import {useEffect, useState} from 'react';
-import CustomList from './Results';
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import {
+  ActivityIndicator,
+  Button,
+  Image,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import CustomDropdown from '../../Components/Dropdown';
 import fetchGeoCodingResults from '../../services/geoCoding.service';
-import SelectResult from './SelectResult';
-import {useIsFocused} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import getLocation from '../../services/getCurrentLocation';
+import {BottomTabParamList, LocationType} from '../../Types';
+import asyncStorageService from '../../services/asyncStorage.service';
 
-type ListProp = {id: string; label: string};
+const Search = () => {
+  const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
 
-const Search = ({navigation}: any) => {
-  const [searchStart, setSearchStart] = useState('');
-  const [selectStart, setSelectStart] = useState<any>({});
-  const [selectEnd, setSelectEnd] = useState<any>({});
-  const [searchEnd, setSearchEnd] = useState('');
-  const [dataStart, setDataStart] = useState<ListProp[]>([]);
-  const [dataEnd, setDataEnd] = useState<ListProp[]>([]);
-  const [selectGas, setSelectGas] = useState('');
+  const [startValue, setStartValue] = useState('');
+  const [endValue, setEndValue] = useState('');
+  const [startText, setStartText] = useState('');
+  const [endText, setEndText] = useState('');
+  const [gasTypeValue, setGasTypeValue] = useState('');
+  const [location, setLocation] = useState('');
+  const [isFetchStart, setIsFetchStart] = useState(false);
+  const [isFetchEnd, setIsFetchEnd] = useState(false);
+  const abortController = useRef(new AbortController());
+  const textInputRef = useRef<TextInput>(null);
+
+  const setLocationCallback = (value: LocationType | string) => {
+    setLocation(value as string);
+  };
 
   useEffect(() => {
-    setSearchStart(selectStart.label);
-  }, [selectStart]);
+    getLocation(setLocationCallback, 'string');
+  }, []);
+
+  const gasTypes = [
+    {label: 'E85', value: 'e85'},
+    {label: 'E10', value: 'e10'},
+    {label: 'SP95', value: 'sp95'},
+    {label: 'SP98', value: 'sp98'},
+    {label: 'Gazole', value: 'gazole'},
+    {label: 'GPLc', value: 'gplc'},
+  ];
+
+  const [startResults, setStartResults] = useState<
+    {label: string; value: string}[]
+  >([]);
+  const [endResults, setEndResults] = useState<
+    {label: string; value: string}[]
+  >([]);
+
+  const setEndResultsCallback = (value: {label: string; value: string}[]) => {
+    setEndResults(value);
+  };
+
+  const setStartResultsCallback = (value: {label: string; value: string}[]) => {
+    setStartResults(value);
+  };
+
+  const setIsFetchStartCallback = (value: boolean) => {
+    setIsFetchStart(value);
+  };
+
+  const setIsFetchEndCallback = (value: boolean) => {
+    setIsFetchEnd(value);
+  };
 
   useEffect(() => {
-    setSearchEnd(selectEnd.label);
-  }, [selectEnd]);
+    if (location.length != 0) {
+      setEndResults(prevState => [
+        {label: 'Votre position', value: location},
+        ...prevState,
+      ]);
+      setStartResults(prevState => [
+        {label: 'Votre position', value: location},
+        ...prevState,
+      ]);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (startText.length >= 3) {
+      try {
+        fetchGeoCodingResults(
+          {adress: startText},
+          setStartResultsCallback,
+          setIsFetchStartCallback,
+          abortController,
+        );
+      } catch (e) {
+        console.log('Rejected promise', e);
+      }
+      return () => abortController.current.abort();
+    }
+  }, [startText]);
+
+  useEffect(() => {
+    if (endText.length >= 3) {
+      try {
+        fetchGeoCodingResults(
+          {adress: endText},
+          setEndResultsCallback,
+          setIsFetchEndCallback,
+          abortController,
+        );
+      } catch (e) {
+        console.log('Rejected promise', e);
+      }
+      return () => abortController.current.abort();
+    }
+  }, [endText]);
+
   return (
-    <View>
-      <SearchBar
-        style={{zIndex: 3}}
-        placeholder="Départ"
-        onChangeText={val => {
-          setSearchStart(val);
-        }}
-        value={searchStart}
-        lightTheme
-        searchIcon
-      />
-      <SearchBar
-        style={{zIndex: 1}}
-        placeholder="Arrivée"
-        onChangeText={val => {
-          setSearchEnd(val);
-        }}
-        value={searchEnd}
-        lightTheme
-        searchIcon
-      />
-      <View style={{width: '100%', height: 100, flexDirection: 'row'}}>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectGas('e10_prix');
-          }}
-          style={styles(selectGas, 'e10_prix').button}>
-          <Text>E10</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectGas('e5_prix');
-          }}
-          style={styles(selectGas, 'e5_prix').button}>
-          <Text>E5</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles(selectGas, 'sp95_prix').button}
-          onPress={() => {
-            setSelectGas('sp95_prix');
-          }}>
-          <Text>SP95</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles(selectGas, 'sp98_prix').button}
-          onPress={() => {
-            setSelectGas('sp98_prix');
-          }}>
-          <Text>SP98</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles(selectGas, 'gazole_prix').button}
-          onPress={() => {
-            setSelectGas('gazole_prix');
-          }}>
-          <Text>Gazole</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={{alignItems: 'center'}}>
-        <TouchableOpacity
+    <View style={[styles.container]}>
+      <KeyboardAvoidingView behavior="padding" style={styles.centeredView}>
+        <View
           style={{
-            backgroundColor: 'blue',
-            height: 40,
-            borderRadius: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
             width: '80%',
-          }}
-          onPress={() => {
-            if (selectEnd && selectStart && selectGas.length != 0) {
-              navigation.navigate('Home', {
-                start: selectStart,
-                end: selectEnd,
-                selectGas: selectGas,
-                isLoading: true,
-              });
-            }
+            flex: 3,
+            marginTop: 60,
           }}>
-          <Text>Lancer la recherche</Text>
-        </TouchableOpacity>
-      </View>
-      <SelectResult
-        searchText={searchStart}
-        setSelect={setSelectStart}
-        selected={selectStart}
-        data={dataStart}
-        setData={setDataStart}
-      />
-      <SelectResult
-        searchText={searchEnd}
-        setSelect={setSelectEnd}
-        selected={selectEnd}
-        data={dataEnd}
-        setData={setDataEnd}
-      />
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.legend}>Point de depart :</Text>
+            <CustomDropdown
+              placeholder="Depart"
+              data={startResults}
+              value={startValue}
+              setValue={setStartValue}
+              setText={setStartText}
+              text={startText}
+              isLoading={isFetchStart}
+              textInputRef={textInputRef}
+            />
+          </View>
+          <View style={{marginVertical: 60, alignItems: 'center'}}>
+            <Text style={styles.legend}>Point d'arrivee :</Text>
+            <CustomDropdown
+              placeholder="Arrivee"
+              data={endResults}
+              value={endValue}
+              text={endText}
+              setValue={setEndValue}
+              setText={setEndText}
+              isLoading={isFetchEnd}
+              textInputRef={textInputRef}
+            />
+          </View>
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.legend}>Type de carburant :</Text>
+            <CustomDropdown
+              placeholder="Carburant"
+              data={gasTypes}
+              value={gasTypeValue}
+              setValue={setGasTypeValue}
+              isLoading={false}
+            />
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  startValue.length == 0 ||
+                  endValue.length == 0 ||
+                  gasTypeValue.length == 0
+                    ? '#C8CCCE'
+                    : '#00A19B',
+              },
+            ]}
+            disabled={
+              startValue.length == 0 ||
+              endValue.length == 0 ||
+              gasTypeValue.length == 0
+            }
+            onPress={() => {
+              asyncStorageService.storeGasType(gasTypeValue);
+              navigation.navigate('Map', {start: startValue, end: endValue});
+            }}>
+            <Image
+              source={require('../../assets/search.png')}
+              style={styles.icon}></Image>
+            <Text style={styles.buttonTitle}>Rechercher</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };
 
-const styles = (selectGas?: string, name?: string) =>
-  StyleSheet.create({
-    button: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: 1,
-      borderColor: 'black',
-      backgroundColor: selectGas == name ? 'green' : 'white',
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 50,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  legend: {
+    fontSize: 20,
+    color: '#00A19B',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    paddingHorizontal: 30,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    width: '50%',
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    tintColor: '#fff',
+  },
+  buttonTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default Search;

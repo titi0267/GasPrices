@@ -1,6 +1,6 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import BottomTabNavigation from './Navigation/BottomTabNavigator';
+import BottomTabNavigation from './src/Navigation/BottomTabNavigator';
 
 const App = (): JSX.Element => {
   // MapboxGl.setWellKnownTileServer('Mapbox');

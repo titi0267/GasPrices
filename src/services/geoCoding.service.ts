@@ -14,7 +14,6 @@ const fetchGeoCodingResults = async (
   // Update the reference to the new AbortController
   abortController.current = newAbortController;
   setLoading(true);
-  console.log('search query', body.adress);
 
   const res = await fetch(`${HOST}/geoCoding`, {
     method: 'POST',
@@ -27,12 +26,10 @@ const fetchGeoCodingResults = async (
 
   if (!res.ok) throw Error('Error on geocoding services');
   const resolve = await res.json();
-  console.log(resolve);
   const values = resolve.map((obj: any) => ({
     label: obj.label,
     value: obj.geometry.join(','),
   }));
-  console.log('found query', values[0]);
   setLoading(false);
 
   setResults(values);

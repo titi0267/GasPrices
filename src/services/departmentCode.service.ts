@@ -24,7 +24,6 @@ const departementsCodes = async (
   const code = [];
   for (let i = 0; i < geoJson.geometry.coordinates.length; i += 500) {
     const position = geoJson.geometry.coordinates[i];
-    console.log(position);
     if (position) {
       code.push(await fetchDepartmentCode({coords: position}));
     }

@@ -16,7 +16,6 @@ const getLocation = async (
       Geolocation.getCurrentPosition(
         position => {
           const {latitude, longitude} = position.coords;
-          console.log(latitude, longitude);
           if (typeToSet == 'string')
             setLocationCallback(`${latitude},${longitude}`);
           else setLocationCallback({latitude, longitude});
