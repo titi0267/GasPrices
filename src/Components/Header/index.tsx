@@ -1,17 +1,24 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 const Header = (props: {title: string}) => {
   const {title} = props;
   const info = require('../../assets/information.png');
+  const navigation = useNavigation();
   return (
     <View>
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
         </View>
-        <Image style={styles.information} source={info}></Image>
+        <TouchableOpacity
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate('Aide');
+          }}>
+          <Image style={styles.information} source={info}></Image>
+        </TouchableOpacity>
       </View>
-      {/* <View style={styles.separator}></View> */}
     </View>
   );
 };

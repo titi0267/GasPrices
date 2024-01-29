@@ -1,15 +1,11 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import BottomTabNavigation from './src/Navigation/BottomTabNavigator';
+import RootStackNavigation from './src/Navigation/RootStackNavigator';
 
 const App = (): JSX.Element => {
-  // MapboxGl.setWellKnownTileServer('Mapbox');
-  // MapboxGl.setAccessToken(MAPBOX_API_KEY);
-  // MapboxGl.setConnected(true);
-
   return (
     <NavigationContainer>
-      <BottomTabNavigation />
+      <RootStackNavigation />
     </NavigationContainer>
   );
 };

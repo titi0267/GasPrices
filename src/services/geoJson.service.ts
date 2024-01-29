@@ -14,8 +14,7 @@ const fetchGeoJsonResults = async (
     },
     body: JSON.stringify(body),
   });
-
-  if (!res.ok) throw Error('Error on open  services');
+  if (!res.ok) throw Error('Error on open services');
   const resolve = await res.json();
 
   setData(resolve[0]);

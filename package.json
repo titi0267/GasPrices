@@ -15,6 +15,7 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.17",
     "@rneui/themed": "^4.0.0-rc.7",
     "@rnmapbox/maps": "^10.0.5-rc.1",
     "i": "^0.3.7",
