@@ -1,4 +1,4 @@
-package com.gasprices;
+package com.opticarbu;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
