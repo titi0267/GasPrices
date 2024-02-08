@@ -75,44 +75,13 @@ Launch the project with
 
 ## Overview
 
-<p align="left">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <span>Navigate on the map</span>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <span>Search for your itinerary & your fuel</span>
-</p>
+Navigate on the map | Search for your itinerary & your fuel | Display the gas stations along your itinerary
+ --- | --- | ---
+<img src="src/assets//ReadMe/map-page.png" alt="Image 1" width="300"> | <img src="src/assets//ReadMe/search-page.png" alt="Image 2" width="300"> | <img src="src/assets//ReadMe/pumps-on-map.png" alt="Image 1" width="300">
 
-<p align="center">
-  <img src="src/assets//ReadMe/map-page.png" alt="Image 1" width="300">
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="src/assets//ReadMe/search-page.png" alt="Image 2" width="300">
-</p>
-
-<p align="left">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <span>Display the gas stations along your itinerary</span>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <span>Click on one of the gas station</span>
-</p>
-
-<p align="center">
-  <img src="src/assets//ReadMe/pumps-on-map.png" alt="Image 1" width="300">
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="src/assets//ReadMe/click-on-pump.png" alt="Image 2" width="300">
-</p>
-
-<p align="left">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <span>Check the lowest price</span>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <span>Redirect to maps and start driving</span>
-</p>
-
-<p align="center">
-  <img src="src/assets//ReadMe/pump-data.png" alt="Image 1" width="300">
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="src/assets//ReadMe/redirect-to-maps.png" alt="Image 2" width="300">
-</p>
+Click on one of the gas station | Check the lowest price | Redirect to maps and start driving
+--- | --- | ---
+ <img src="src/assets//ReadMe/click-on-pump.png" alt="Image 2" width="300"> | <img src="src/assets//ReadMe/pump-data.png" alt="Image 1" width="300"> | <img src="src/assets//ReadMe/redirect-to-maps.png" alt="Image 2" width="300">
 
 ## About
 
