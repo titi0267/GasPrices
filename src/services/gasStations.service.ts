@@ -1,6 +1,7 @@
 import {HOST} from '@env';
 
 const fetchGasStationList = async (body: {code_department: string}) => {
+  console.log('fetch gas');
   const res = await fetch(`${HOST}/gasStations`, {
     method: 'POST',
     headers: {
@@ -28,9 +29,8 @@ const gasStations = async (
   setGasStations(gasStations);
 };
 
-// Function to calculate Haversine distance between two coordinates
 function haversineDistance(itinerayCoords: number[], stationCoords: any) {
-  const R = 6371; // Radius of the Earth in kilometers
+  const R = 6371;
   const dLat =
     (stationCoords.geometry.coordinates[0] - itinerayCoords[0]) *
     (Math.PI / 180);

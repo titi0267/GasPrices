@@ -1,9 +1,6 @@
-import {forwardRef, useEffect, useImperativeHandle, useRef} from 'react';
 import {
   ActivityIndicator,
-  Button,
   Image,
-  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -38,7 +35,7 @@ const CustomDropdown = (props: {
       if (textInputRef != undefined && textInputRef.current) {
         textInputRef.current?.focus();
       }
-    }, 100);
+    }, 200);
   };
 
   return (

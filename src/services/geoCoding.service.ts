@@ -14,7 +14,6 @@ const fetchGeoCodingResults = async (
   // Update the reference to the new AbortController
   abortController.current = newAbortController;
   setLoading(true);
-
   const res = await fetch(`${HOST}/geoCoding`, {
     method: 'POST',
     headers: {

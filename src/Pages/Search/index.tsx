@@ -1,13 +1,5 @@
+import {useEffect, useRef, useState} from 'react';
 import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import {
-  ActivityIndicator,
-  Button,
   Image,
   KeyboardAvoidingView,
   StyleSheet,
@@ -64,6 +56,12 @@ const Search = () => {
 
   const setEndResultsCallback = (value: {label: string; value: string}[]) => {
     setEndResults(value);
+  };
+  const setEndValueCallback = (value: string) => {
+    setEndValue(value);
+  };
+  const setStartValueCallback = (value: string) => {
+    setStartValue(value);
   };
 
   const setStartResultsCallback = (value: {label: string; value: string}[]) => {
@@ -138,7 +136,7 @@ const Search = () => {
               placeholder="Depart"
               data={startResults}
               value={startValue}
-              setValue={setStartValue}
+              setValue={setStartValueCallback}
               setText={setStartText}
               text={startText}
               isLoading={isFetchStart}
@@ -152,7 +150,7 @@ const Search = () => {
               data={endResults}
               value={endValue}
               text={endText}
-              setValue={setEndValue}
+              setValue={setEndValueCallback}
               setText={setEndText}
               isLoading={isFetchEnd}
               textInputRef={textInputRef}
