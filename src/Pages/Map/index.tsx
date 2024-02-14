@@ -18,6 +18,7 @@ import departmentCodeService from '../../services/departmentCode.service';
 import gasStationsService from '../../services/gasStations.service';
 import asyncStorageService from '../../services/asyncStorage.service';
 import CustomCard from '../../Components/Card';
+import CustomModal from '../../Components/Modal';
 
 Mapbox.setAccessToken(MAPBOX_API_KEY);
 
@@ -201,8 +202,14 @@ const Map = () => {
           size={50}
           style={{position: 'absolute', zIndex: 100}}></ActivityIndicator>
       )}
-
-      <Modal
+      <CustomModal isVisible={isModalVisible} setVisible={setIsModalVisible}>
+        <CustomCard
+          address={infos?.adress ?? 'Error'}
+          coords={infos?.coords ?? [0, 0]}
+          gasType={infos?.gasType ?? 'Error'}
+          price={infos?.price ?? 'Error'}></CustomCard>
+      </CustomModal>
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
@@ -233,7 +240,7 @@ const Map = () => {
             gasType={infos?.gasType ?? 'Error'}
             price={infos?.price ?? 'Error'}></CustomCard>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

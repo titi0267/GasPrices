@@ -36,6 +36,7 @@ const CustomCard = (props: {
           onPress={() => {
             Linking.openURL(
               `https://www.google.com/maps/dir/?api=1&destination=${coords[1]},${coords[0]}`,
+              // `https://www.waze.com/ul?ll=${coords[1]},${coords[0]}&navigate=yes`
             );
           }}>
           <Text style={{color: '#ffffff'}}>Itineraire</Text>
