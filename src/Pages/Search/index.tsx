@@ -39,12 +39,12 @@ const Search = () => {
   }, []);
 
   const gasTypes = [
-    {label: 'E85', value: 'e85'},
-    {label: 'E10', value: 'e10'},
-    {label: 'SP95', value: 'sp95'},
-    {label: 'SP98', value: 'sp98'},
-    {label: 'Gazole', value: 'gazole'},
-    {label: 'GPLc', value: 'gplc'},
+    {label: 'E85', value: 'E85.png'},
+    {label: 'E10', value: 'E10.png'},
+    {label: 'SP95', value: 'SP95.png'},
+    {label: 'SP98', value: 'SP98.png'},
+    {label: 'Gazole', value: 'Gazole.png'},
+    {label: 'GPLc', value: 'GPL.png'},
   ];
 
   const [startResults, setStartResults] = useState<

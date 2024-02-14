@@ -8,6 +8,8 @@ const CustomCard = (props: {
   coords: [number, number];
 }) => {
   const {address, price, gasType, coords} = props;
+  console.log(gasType);
+  const img = `../../assets/Fuels/${gasType}`;
   return (
     <Card
       contentStyle={{
@@ -25,9 +27,12 @@ const CustomCard = (props: {
             style={styles.image}></Image>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.text}>Adresse: {address}</Text>
+          <Text style={styles.text}>Ville: {address}</Text>
+          <View style={{flexDirection: 'row'}}>
+            {gasType.length != 0 && <Image source={{uri: img}} />}
+            <Text style={styles.text}>{price}€/Litre</Text>
+          </View>
           <Text style={styles.text}>Type d'essence: {gasType}</Text>
-          <Text style={styles.text}>Prix au litre: {price}</Text>
         </View>
       </View>
       <View style={{marginTop: 10, borderRadius: 50}}>
