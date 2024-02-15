@@ -1,42 +1,48 @@
+import {useEffect, useRef, useState} from 'react';
 import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import {
-  ActivityIndicator,
-  Button,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomDropdown from '../../Components/Dropdown';
-import fetchGeoCodingResults from '../../services/geoCoding.service';
+import {fetchCityNames, fetchCityPosition} from '../../services/cities.service';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import getLocation from '../../services/getCurrentLocation';
-import {BottomTabParamList, LocationType} from '../../Types';
+import {
+  BottomTabParamList,
+  CityPosition,
+  GasType,
+  LocationType,
+} from '../../Types';
+import CustomInput from '../../Components/Input';
 import asyncStorageService from '../../services/asyncStorage.service';
+import CustomDropdown from '../../Components/Dropdown';
+import FuelSelection from '../../Components/FuelSelection';
+import {FuelAssociation} from '../../assets/Fuels';
 
 const Search = () => {
   const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
 
-  const [startValue, setStartValue] = useState('');
-  const [endValue, setEndValue] = useState('');
-  const [startText, setStartText] = useState('');
-  const [endText, setEndText] = useState('');
-  const [gasTypeValue, setGasTypeValue] = useState('');
+  const [cityNamesStart, setCityNamesStart] = useState<string[]>([]);
+  const [cityCoordsStart, setCityCoordsStart] = useState<CityPosition | null>(
+    null,
+  );
+  const [inputValueStart, setInputValueStart] = useState('');
+  const [cityNamesEnd, setCityNamesEnd] = useState<string[]>([]);
+  const [cityCoordsEnd, setCityCoordsEnd] = useState<CityPosition | null>(null);
+  const [inputValueEnd, setInputValueEnd] = useState('');
+
+  const [isStartCitySelected, setIsStartCitySelected] = useState(false);
+  const [isEndCitySelected, setIsEndCitySelected] = useState(false);
+
   const [location, setLocation] = useState('');
   const [isFetchStart, setIsFetchStart] = useState(false);
   const [isFetchEnd, setIsFetchEnd] = useState(false);
-  const abortController = useRef(new AbortController());
-  const textInputRef = useRef<TextInput>(null);
+  const [selectedFuel, setSelectedFuel] = useState<GasType | null>(null);
 
   const setLocationCallback = (value: LocationType | string) => {
     setLocation(value as string);
@@ -46,30 +52,6 @@ const Search = () => {
     getLocation(setLocationCallback, 'string');
   }, []);
 
-  const gasTypes = [
-    {label: 'E85', value: 'e85'},
-    {label: 'E10', value: 'e10'},
-    {label: 'SP95', value: 'sp95'},
-    {label: 'SP98', value: 'sp98'},
-    {label: 'Gazole', value: 'gazole'},
-    {label: 'GPLc', value: 'gplc'},
-  ];
-
-  const [startResults, setStartResults] = useState<
-    {label: string; value: string}[]
-  >([]);
-  const [endResults, setEndResults] = useState<
-    {label: string; value: string}[]
-  >([]);
-
-  const setEndResultsCallback = (value: {label: string; value: string}[]) => {
-    setEndResults(value);
-  };
-
-  const setStartResultsCallback = (value: {label: string; value: string}[]) => {
-    setStartResults(value);
-  };
-
   const setIsFetchStartCallback = (value: boolean) => {
     setIsFetchStart(value);
   };
@@ -78,134 +60,283 @@ const Search = () => {
     setIsFetchEnd(value);
   };
 
-  useEffect(() => {
-    if (location.length != 0) {
-      setEndResults(prevState => [
-        {label: 'Votre position', value: location},
-        ...prevState,
-      ]);
-      setStartResults(prevState => [
-        {label: 'Votre position', value: location},
-        ...prevState,
-      ]);
-    }
-  }, [location]);
+  const setSelectedFuelCallback = (value: GasType) => {
+    setSelectedFuel(value);
+  };
+
+  // useEffect(() => {
+  //   if (location.length != 0) {
+  //     setEndResults(prevState => [
+  //       {label: 'Votre position', value: location},
+  //       ...prevState,
+  //     ]);
+  //     setStartResults(prevState => [
+  //       {label: 'Votre position', value: location},
+  //       ...prevState,
+  //     ]);
+  //   }
+  // }, [location]);
+
+  const cityNamesStartCallback = (value: string[]) => {
+    setCityNamesStart(value);
+  };
+
+  const setCityCoordsStartCallback = (value: CityPosition) => {
+    setCityCoordsStart(value);
+  };
+
+  const cityNamesEndCallback = (value: string[]) => {
+    setCityNamesEnd(value);
+  };
+
+  const setCityCoordsEndCallback = (value: CityPosition) => {
+    setCityCoordsEnd(value);
+  };
 
   useEffect(() => {
-    if (startText.length >= 3) {
-      try {
-        fetchGeoCodingResults(
-          {adress: startText},
-          setStartResultsCallback,
+    const debounceTimer = setTimeout(() => {
+      if (inputValueStart.length != 0 && isStartCitySelected == false) {
+        fetchCityNames(
+          {adress: inputValueStart},
+          cityNamesStartCallback,
           setIsFetchStartCallback,
-          abortController,
         );
-      } catch (e) {
-        console.log('Rejected promise', e);
       }
-      return () => abortController.current.abort();
-    }
-  }, [startText]);
+    }, 400);
+    return () => clearTimeout(debounceTimer);
+  }, [inputValueStart, isStartCitySelected]);
+
+  const onChangeTextStart = (value: string) => {
+    setInputValueStart(value);
+  };
 
   useEffect(() => {
-    if (endText.length >= 3) {
-      try {
-        fetchGeoCodingResults(
-          {adress: endText},
-          setEndResultsCallback,
+    const debounceTimer = setTimeout(() => {
+      if (inputValueEnd.length != 0 && isEndCitySelected == false)
+        fetchCityNames(
+          {adress: inputValueEnd},
+          cityNamesEndCallback,
           setIsFetchEndCallback,
-          abortController,
         );
-      } catch (e) {
-        console.log('Rejected promise', e);
-      }
-      return () => abortController.current.abort();
-    }
-  }, [endText]);
+    }, 400);
+    return () => clearTimeout(debounceTimer);
+  }, [inputValueEnd, isEndCitySelected]);
+
+  const onChangeTextEnd = (value: string) => {
+    setInputValueEnd(value);
+  };
+
+  const onPressItemStart = (item: string) => {
+    Keyboard.dismiss();
+    setIsStartCitySelected(true);
+    setInputValueStart(item);
+    setCityNamesStart([]);
+    fetchCityPosition({adress: item}, setCityCoordsStartCallback);
+  };
+
+  const onPressItemEnd = (item: string) => {
+    Keyboard.dismiss();
+    setIsEndCitySelected(true);
+    setInputValueEnd(item);
+    setCityNamesEnd([]);
+    fetchCityPosition({adress: item}, setCityCoordsEndCallback);
+  };
+
+  const onClearInputStart = () => {
+    setIsStartCitySelected(false);
+    setInputValueStart('');
+    setCityNamesStart([]);
+    setCityCoordsStart(null);
+  };
+
+  const onClearInputEnd = () => {
+    setIsEndCitySelected(false);
+    setInputValueEnd('');
+    setCityNamesEnd([]);
+    setCityCoordsEnd(null);
+  };
+
+  const refStart = useRef<View>(null);
+  const [posStartDropdown, setPosStartDropdown] = useState(0);
+  const refEnd = useRef<View>(null);
+  const [posEndDropdown, setPosEndDropdown] = useState(0);
 
   return (
-    <View style={[styles.container]}>
-      <KeyboardAvoidingView behavior="padding" style={styles.centeredView}>
-        <View
-          style={{
-            width: '80%',
-            flex: 3,
-            marginTop: 60,
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View style={{height: 160}}></View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          width: '100%',
+        }}>
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'SP95-E10')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'SP95-E10')?.image
+          }
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'SP95-E5')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'SP95-E5')?.image
+          }
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'SP98-E5')?.name}
+          isSelected={selectedFuel}
+          setFuelName={setSelectedFuelCallback}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'SP98-E5')?.image
+          }
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'Gasoil')?.name}
+          isSelected={selectedFuel}
+          setFuelName={setSelectedFuelCallback}
+          imageName={FuelAssociation.find(fuel => fuel.name == 'Gasoil')?.image}
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'GPL')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={FuelAssociation.find(fuel => fuel.name == 'GPL')?.image}
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'Ethanol')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'Ethanol')?.image
+          }
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor:
+                cityCoordsStart == null ||
+                cityCoordsEnd == null ||
+                selectedFuel == null
+                  ? '#C8CCCE'
+                  : '#00A19B',
+            },
+          ]}
+          disabled={
+            cityCoordsStart == null ||
+            cityCoordsEnd == null ||
+            selectedFuel == null
+          }
+          onPress={() => {
+            asyncStorageService.storeGasType(
+              FuelAssociation.find(fuel => fuel.name == selectedFuel)
+                ?.apiName ?? 'E10',
+            );
+            navigation.navigate('Map', {
+              start: cityCoordsStart?.geometry,
+              end: cityCoordsEnd?.geometry,
+            });
           }}>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.legend}>Point de depart :</Text>
-            <CustomDropdown
-              placeholder="Depart"
-              data={startResults}
-              value={startValue}
-              setValue={setStartValue}
-              setText={setStartText}
-              text={startText}
-              isLoading={isFetchStart}
-              textInputRef={textInputRef}
-            />
-          </View>
-          <View style={{marginVertical: 60, alignItems: 'center'}}>
-            <Text style={styles.legend}>Point d'arrivee :</Text>
-            <CustomDropdown
-              placeholder="Arrivee"
-              data={endResults}
-              value={endValue}
-              text={endText}
-              setValue={setEndValue}
-              setText={setEndText}
-              isLoading={isFetchEnd}
-              textInputRef={textInputRef}
-            />
-          </View>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.legend}>Type de carburant :</Text>
-            <CustomDropdown
-              placeholder="Carburant"
-              data={gasTypes}
-              value={gasTypeValue}
-              setValue={setGasTypeValue}
-              isLoading={false}
-            />
-          </View>
+          <Image
+            source={require('../../assets/search.png')}
+            style={styles.icon}></Image>
+          <Text style={styles.buttonTitle}>Rechercher</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View
+        style={{
+          position: 'absolute',
+          marginTop: 20,
+          width: '90%',
+          alignItems: 'center',
+        }}
+        ref={refStart}
+        onLayout={() => {
+          refStart.current?.measure((x, y, width, height, pageX, pageY) => {
+            setPosStartDropdown(pageY);
+          });
+        }}>
+        <CustomInput
+          onChangeText={onChangeTextStart}
+          onClearInput={onClearInputStart}
+          placeholder="Depart"
+          inputValue={inputValueStart}></CustomInput>
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          width: '90%',
+          alignItems: 'center',
+          marginTop: 90,
+        }}
+        ref={refEnd}
+        onLayout={() => {
+          refEnd.current?.measure((x, y, width, height, pageX, pageY) => {
+            setPosEndDropdown(pageY);
+          });
+        }}>
+        <CustomInput
+          onChangeText={onChangeTextEnd}
+          onClearInput={onClearInputEnd}
+          placeholder="Arrivee"
+          inputValue={inputValueEnd}></CustomInput>
+      </View>
+      {cityNamesStart.length != 0 ? (
+        <View
+          style={[
+            {
+              position: 'absolute',
+              alignItems: 'center',
+              top: posStartDropdown,
+              width: '80%',
+              backgroundColor: 'white',
+            },
+          ]}>
+          <CustomDropdown
+            onChangeText={onChangeTextStart}
+            onPress={onPressItemStart}
+            data={cityNamesStart}
+            isLoading={isFetchStart}></CustomDropdown>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              {
-                backgroundColor:
-                  startValue.length == 0 ||
-                  endValue.length == 0 ||
-                  gasTypeValue.length == 0
-                    ? '#C8CCCE'
-                    : '#00A19B',
-              },
-            ]}
-            disabled={
-              startValue.length == 0 ||
-              endValue.length == 0 ||
-              gasTypeValue.length == 0
-            }
-            onPress={() => {
-              asyncStorageService.storeGasType(gasTypeValue);
-              navigation.navigate('Map', {start: startValue, end: endValue});
-            }}>
-            <Image
-              source={require('../../assets/search.png')}
-              style={styles.icon}></Image>
-            <Text style={styles.buttonTitle}>Rechercher</Text>
-          </TouchableOpacity>
+      ) : (
+        <></>
+      )}
+      {cityNamesEnd.length != 0 ? (
+        <View
+          style={[
+            {
+              position: 'absolute',
+              alignItems: 'center',
+              top: posEndDropdown,
+              width: '80%',
+              backgroundColor: 'white',
+            },
+          ]}>
+          <CustomDropdown
+            onChangeText={onChangeTextEnd}
+            onPress={onPressItemEnd}
+            data={cityNamesEnd}
+            isLoading={isFetchEnd}></CustomDropdown>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      ) : (
+        <></>
+      )}
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
-    justifyContent: 'space-between',
+    width: '100%',
     alignItems: 'center',
     flex: 1,
     backgroundColor: '#ffffff',
@@ -221,8 +352,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    top: '30%',
   },
   button: {
     flexDirection: 'row',
