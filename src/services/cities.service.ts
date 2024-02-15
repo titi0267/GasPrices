@@ -7,7 +7,6 @@ const fetchCityNames = async (
   setLoading: (value: boolean) => void,
 ) => {
   setLoading(true);
-  console.log('build');
   const res = await fetch(`${HOST}/cityName`, {
     method: 'POST',
     headers: {
