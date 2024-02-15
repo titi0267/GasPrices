@@ -1,34 +1,41 @@
 import {useEffect, useRef, useState} from 'react';
 import {
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomDropdown from '../../Components/Dropdown';
-import fetchGeoCodingResults from '../../services/geoCoding.service';
+import {fetchCityNames, fetchCityPosition} from '../../services/cities.service';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import getLocation from '../../services/getCurrentLocation';
-import {BottomTabParamList, LocationType} from '../../Types';
+import {BottomTabParamList, CityPosition, LocationType} from '../../Types';
+import CustomInput from '../../Components/Input';
 import asyncStorageService from '../../services/asyncStorage.service';
+import CustomDropdown from '../../Components/Dropdown';
 
 const Search = () => {
   const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
 
-  const [startValue, setStartValue] = useState('');
-  const [endValue, setEndValue] = useState('');
-  const [startText, setStartText] = useState('');
-  const [endText, setEndText] = useState('');
+  const [cityNamesStart, setCityNamesStart] = useState<string[]>([]);
+  const [cityCoordsStart, setCityCoordsStart] = useState<CityPosition | null>(
+    null,
+  );
+  const [inputValueStart, setInputValueStart] = useState('');
+  const [cityNamesEnd, setCityNamesEnd] = useState<string[]>([]);
+  const [cityCoordsEnd, setCityCoordsEnd] = useState<CityPosition | null>(null);
+  const [inputValueEnd, setInputValueEnd] = useState('');
+
+  const [isStartCitySelected, setIsStartCitySelected] = useState(false);
+  const [isEndCitySelected, setIsEndCitySelected] = useState(false);
+
   const [gasTypeValue, setGasTypeValue] = useState('');
   const [location, setLocation] = useState('');
   const [isFetchStart, setIsFetchStart] = useState(false);
   const [isFetchEnd, setIsFetchEnd] = useState(false);
-  const abortController = useRef(new AbortController());
-  const textInputRef = useRef<TextInput>(null);
 
   const setLocationCallback = (value: LocationType | string) => {
     setLocation(value as string);
@@ -47,27 +54,6 @@ const Search = () => {
     {label: 'GPLc', value: 'gplc'},
   ];
 
-  const [startResults, setStartResults] = useState<
-    {label: string; value: string}[]
-  >([]);
-  const [endResults, setEndResults] = useState<
-    {label: string; value: string}[]
-  >([]);
-
-  const setEndResultsCallback = (value: {label: string; value: string}[]) => {
-    setEndResults(value);
-  };
-  const setEndValueCallback = (value: string) => {
-    setEndValue(value);
-  };
-  const setStartValueCallback = (value: string) => {
-    setStartValue(value);
-  };
-
-  const setStartResultsCallback = (value: {label: string; value: string}[]) => {
-    setStartResults(value);
-  };
-
   const setIsFetchStartCallback = (value: boolean) => {
     setIsFetchStart(value);
   };
@@ -76,134 +62,223 @@ const Search = () => {
     setIsFetchEnd(value);
   };
 
-  useEffect(() => {
-    if (location.length != 0) {
-      setEndResults(prevState => [
-        {label: 'Votre position', value: location},
-        ...prevState,
-      ]);
-      setStartResults(prevState => [
-        {label: 'Votre position', value: location},
-        ...prevState,
-      ]);
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if (location.length != 0) {
+  //     setEndResults(prevState => [
+  //       {label: 'Votre position', value: location},
+  //       ...prevState,
+  //     ]);
+  //     setStartResults(prevState => [
+  //       {label: 'Votre position', value: location},
+  //       ...prevState,
+  //     ]);
+  //   }
+  // }, [location]);
+
+  const cityNamesStartCallback = (value: string[]) => {
+    setCityNamesStart(value);
+  };
+
+  const setCityCoordsStartCallback = (value: CityPosition) => {
+    setCityCoordsStart(value);
+  };
+
+  const cityNamesEndCallback = (value: string[]) => {
+    setCityNamesEnd(value);
+  };
+
+  const setCityCoordsEndCallback = (value: CityPosition) => {
+    setCityCoordsEnd(value);
+  };
 
   useEffect(() => {
-    if (startText.length >= 3) {
-      try {
-        fetchGeoCodingResults(
-          {adress: startText},
-          setStartResultsCallback,
+    const debounceTimer = setTimeout(() => {
+      if (inputValueStart.length != 0 && isStartCitySelected == false) {
+        fetchCityNames(
+          {adress: inputValueStart},
+          cityNamesStartCallback,
           setIsFetchStartCallback,
-          abortController,
         );
-      } catch (e) {
-        console.log('Rejected promise', e);
       }
-      return () => abortController.current.abort();
-    }
-  }, [startText]);
+    }, 400);
+    return () => clearTimeout(debounceTimer);
+  }, [inputValueStart, isStartCitySelected]);
+
+  const onChangeTextStart = (value: string) => {
+    setInputValueStart(value);
+  };
 
   useEffect(() => {
-    if (endText.length >= 3) {
-      try {
-        fetchGeoCodingResults(
-          {adress: endText},
-          setEndResultsCallback,
+    const debounceTimer = setTimeout(() => {
+      if (inputValueEnd.length != 0 && isEndCitySelected == false)
+        fetchCityNames(
+          {adress: inputValueEnd},
+          cityNamesEndCallback,
           setIsFetchEndCallback,
-          abortController,
         );
-      } catch (e) {
-        console.log('Rejected promise', e);
-      }
-      return () => abortController.current.abort();
-    }
-  }, [endText]);
+    }, 400);
+    return () => clearTimeout(debounceTimer);
+  }, [inputValueEnd, isEndCitySelected]);
+
+  const onChangeTextEnd = (value: string) => {
+    setInputValueEnd(value);
+  };
+
+  const onPressItemStart = (item: string) => {
+    Keyboard.dismiss();
+    setIsStartCitySelected(true);
+    setInputValueStart(item);
+    setCityNamesStart([]);
+    fetchCityPosition({adress: item}, setCityCoordsStartCallback);
+  };
+
+  const onPressItemEnd = (item: string) => {
+    Keyboard.dismiss();
+    setIsEndCitySelected(true);
+    setInputValueEnd(item);
+    setCityNamesEnd([]);
+    fetchCityPosition({adress: item}, setCityCoordsEndCallback);
+  };
+
+  const onClearInputStart = () => {
+    setIsStartCitySelected(false);
+    setInputValueStart('');
+    setCityNamesStart([]);
+    setCityCoordsStart(null);
+  };
+
+  const onClearInputEnd = () => {
+    setIsEndCitySelected(false);
+    setInputValueEnd('');
+    setCityNamesEnd([]);
+    setCityCoordsEnd(null);
+  };
+
+  const refStart = useRef<View>(null);
+  const [posStartDropdown, setPosStartDropdown] = useState(0);
+  const refEnd = useRef<View>(null);
+  const [posEndDropdown, setPosEndDropdown] = useState(0);
 
   return (
-    <View style={[styles.container]}>
-      <KeyboardAvoidingView behavior="padding" style={styles.centeredView}>
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View
+        style={{
+          position: 'absolute',
+          marginTop: 20,
+          width: '90%',
+          alignItems: 'center',
+        }}
+        ref={refStart}
+        onLayout={() => {
+          refStart.current?.measure((x, y, width, height, pageX, pageY) => {
+            setPosStartDropdown(pageY);
+          });
+        }}>
+        <CustomInput
+          onChangeText={onChangeTextStart}
+          onClearInput={onClearInputStart}
+          placeholder="Depart"
+          inputValue={inputValueStart}></CustomInput>
+      </View>
+
+      <View
+        style={{
+          position: 'absolute',
+          width: '90%',
+          alignItems: 'center',
+          marginTop: 90,
+        }}
+        ref={refEnd}
+        onLayout={() => {
+          refEnd.current?.measure((x, y, width, height, pageX, pageY) => {
+            setPosEndDropdown(pageY);
+          });
+        }}>
+        <CustomInput
+          onChangeText={onChangeTextEnd}
+          onClearInput={onClearInputEnd}
+          placeholder="Arrivee"
+          inputValue={inputValueEnd}></CustomInput>
+      </View>
+      {cityNamesStart.length != 0 ? (
         <View
-          style={{
-            width: '80%',
-            flex: 3,
-            marginTop: 60,
+          style={[
+            {
+              position: 'absolute',
+              alignItems: 'center',
+              top: posStartDropdown,
+              width: '80%',
+              backgroundColor: 'white',
+            },
+          ]}>
+          <CustomDropdown
+            onChangeText={onChangeTextStart}
+            onPress={onPressItemStart}
+            data={cityNamesStart}
+            isLoading={isFetchStart}></CustomDropdown>
+        </View>
+      ) : (
+        <></>
+      )}
+      {cityNamesEnd.length != 0 ? (
+        <View
+          style={[
+            {
+              position: 'absolute',
+              alignItems: 'center',
+              top: posEndDropdown,
+              width: '80%',
+              backgroundColor: 'white',
+            },
+          ]}>
+          <CustomDropdown
+            onChangeText={onChangeTextEnd}
+            onPress={onPressItemEnd}
+            data={cityNamesEnd}
+            isLoading={isFetchEnd}></CustomDropdown>
+        </View>
+      ) : (
+        <></>
+      )}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor:
+                (cityCoordsStart && cityCoordsStart.geometry.length == 0) ||
+                (cityCoordsEnd && cityCoordsEnd.geometry.length) == 0 ||
+                gasTypeValue.length == 0
+                  ? '#C8CCCE'
+                  : '#00A19B',
+            },
+          ]}
+          disabled={
+            (cityCoordsStart && cityCoordsStart.geometry.length == 0) ||
+            (cityCoordsEnd && cityCoordsEnd.geometry.length) == 0 ||
+            gasTypeValue.length == 0
+          }
+          onPress={() => {
+            asyncStorageService.storeGasType(gasTypeValue);
+            navigation.navigate('Map', {
+              start: cityCoordsStart?.geometry,
+              end: cityCoordsEnd?.geometry,
+            });
           }}>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.legend}>Point de depart :</Text>
-            <CustomDropdown
-              placeholder="Depart"
-              data={startResults}
-              value={startValue}
-              setValue={setStartValueCallback}
-              setText={setStartText}
-              text={startText}
-              isLoading={isFetchStart}
-              textInputRef={textInputRef}
-            />
-          </View>
-          <View style={{marginVertical: 60, alignItems: 'center'}}>
-            <Text style={styles.legend}>Point d'arrivee :</Text>
-            <CustomDropdown
-              placeholder="Arrivee"
-              data={endResults}
-              value={endValue}
-              text={endText}
-              setValue={setEndValueCallback}
-              setText={setEndText}
-              isLoading={isFetchEnd}
-              textInputRef={textInputRef}
-            />
-          </View>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.legend}>Type de carburant :</Text>
-            <CustomDropdown
-              placeholder="Carburant"
-              data={gasTypes}
-              value={gasTypeValue}
-              setValue={setGasTypeValue}
-              isLoading={false}
-            />
-          </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              {
-                backgroundColor:
-                  startValue.length == 0 ||
-                  endValue.length == 0 ||
-                  gasTypeValue.length == 0
-                    ? '#C8CCCE'
-                    : '#00A19B',
-              },
-            ]}
-            disabled={
-              startValue.length == 0 ||
-              endValue.length == 0 ||
-              gasTypeValue.length == 0
-            }
-            onPress={() => {
-              asyncStorageService.storeGasType(gasTypeValue);
-              navigation.navigate('Map', {start: startValue, end: endValue});
-            }}>
-            <Image
-              source={require('../../assets/search.png')}
-              style={styles.icon}></Image>
-            <Text style={styles.buttonTitle}>Rechercher</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+          <Image
+            source={require('../../assets/search.png')}
+            style={styles.icon}></Image>
+          <Text style={styles.buttonTitle}>Rechercher</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
-    justifyContent: 'space-between',
+    width: '100%',
     alignItems: 'center',
     flex: 1,
     backgroundColor: '#ffffff',
@@ -219,8 +294,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    top: '80%',
   },
   button: {
     flexDirection: 'row',
