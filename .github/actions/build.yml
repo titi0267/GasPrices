@@ -1,7 +1,7 @@
 name: Build and deploy for prod
 on:
   push:
-    branches: ['main']
+    branches: ['build-test']
 jobs:
   android-build:
     name: Android main Build
@@ -16,7 +16,7 @@ jobs:
         with:
           ref: main
       - name: Install npm dependency
-        run: yarn install
+        run: npm install
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       - uses: actions/cache@v3
