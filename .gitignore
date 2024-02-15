@@ -65,3 +65,5 @@ yarn-error.log
 .env
 
 gradle.properties
+
+android/app/build.gradle
