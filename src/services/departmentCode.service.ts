@@ -34,7 +34,6 @@ const departementsCodes = async (
         geoJson.geometry.coordinates[geoJson.geometry.coordinates.length - 1],
     }),
   );
-  console.log('found dep code');
 
   setDepartementCode([...new Set(code)]);
 };

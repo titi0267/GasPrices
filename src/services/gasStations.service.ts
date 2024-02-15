@@ -1,7 +1,6 @@
 import {HOST} from '@env';
 
 const fetchGasStationList = async (body: {code_department: string}) => {
-  console.log('fetch gas');
   const res = await fetch(`${HOST}/gasStations`, {
     method: 'POST',
     headers: {
