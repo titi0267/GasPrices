@@ -12,10 +12,17 @@ import {fetchCityNames, fetchCityPosition} from '../../services/cities.service';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import getLocation from '../../services/getCurrentLocation';
-import {BottomTabParamList, CityPosition, LocationType} from '../../Types';
+import {
+  BottomTabParamList,
+  CityPosition,
+  GasType,
+  LocationType,
+} from '../../Types';
 import CustomInput from '../../Components/Input';
 import asyncStorageService from '../../services/asyncStorage.service';
 import CustomDropdown from '../../Components/Dropdown';
+import FuelSelection from '../../Components/FuelSelection';
+import {FuelAssociation} from '../../assets/Fuels';
 
 const Search = () => {
   const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
@@ -32,10 +39,10 @@ const Search = () => {
   const [isStartCitySelected, setIsStartCitySelected] = useState(false);
   const [isEndCitySelected, setIsEndCitySelected] = useState(false);
 
-  const [gasTypeValue, setGasTypeValue] = useState('');
   const [location, setLocation] = useState('');
   const [isFetchStart, setIsFetchStart] = useState(false);
   const [isFetchEnd, setIsFetchEnd] = useState(false);
+  const [selectedFuel, setSelectedFuel] = useState<GasType | null>(null);
 
   const setLocationCallback = (value: LocationType | string) => {
     setLocation(value as string);
@@ -45,21 +52,16 @@ const Search = () => {
     getLocation(setLocationCallback, 'string');
   }, []);
 
-  const gasTypes = [
-    {label: 'E85', value: 'E85.png'},
-    {label: 'E10', value: 'E10.png'},
-    {label: 'SP95', value: 'SP95.png'},
-    {label: 'SP98', value: 'SP98.png'},
-    {label: 'Gazole', value: 'Gazole.png'},
-    {label: 'GPLc', value: 'GPL.png'},
-  ];
-
   const setIsFetchStartCallback = (value: boolean) => {
     setIsFetchStart(value);
   };
 
   const setIsFetchEndCallback = (value: boolean) => {
     setIsFetchEnd(value);
+  };
+
+  const setSelectedFuelCallback = (value: GasType) => {
+    setSelectedFuel(value);
   };
 
   // useEffect(() => {
@@ -161,6 +163,94 @@ const Search = () => {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View style={{height: 160}}></View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          width: '100%',
+        }}>
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'SP95-E10')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'SP95-E10')?.image
+          }
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'SP95-E5')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'SP95-E5')?.image
+          }
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'SP98-E5')?.name}
+          isSelected={selectedFuel}
+          setFuelName={setSelectedFuelCallback}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'SP98-E5')?.image
+          }
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'Gasoil')?.name}
+          isSelected={selectedFuel}
+          setFuelName={setSelectedFuelCallback}
+          imageName={FuelAssociation.find(fuel => fuel.name == 'Gasoil')?.image}
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'GPL')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={FuelAssociation.find(fuel => fuel.name == 'GPL')?.image}
+        />
+        <FuelSelection
+          fuelName={FuelAssociation.find(fuel => fuel.name == 'Ethanol')?.name}
+          setFuelName={setSelectedFuelCallback}
+          isSelected={selectedFuel}
+          imageName={
+            FuelAssociation.find(fuel => fuel.name == 'Ethanol')?.image
+          }
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor:
+                cityCoordsStart == null ||
+                cityCoordsEnd == null ||
+                selectedFuel == null
+                  ? '#C8CCCE'
+                  : '#00A19B',
+            },
+          ]}
+          disabled={
+            cityCoordsStart == null ||
+            cityCoordsEnd == null ||
+            selectedFuel == null
+          }
+          onPress={() => {
+            asyncStorageService.storeGasType(
+              FuelAssociation.find(fuel => fuel.name == selectedFuel)
+                ?.apiName ?? 'E10',
+            );
+            navigation.navigate('Map', {
+              start: cityCoordsStart?.geometry,
+              end: cityCoordsEnd?.geometry,
+            });
+          }}>
+          <Image
+            source={require('../../assets/search.png')}
+            style={styles.icon}></Image>
+          <Text style={styles.buttonTitle}>Rechercher</Text>
+        </TouchableOpacity>
+      </View>
+
       <View
         style={{
           position: 'absolute',
@@ -180,7 +270,6 @@ const Search = () => {
           placeholder="Depart"
           inputValue={inputValueStart}></CustomInput>
       </View>
-
       <View
         style={{
           position: 'absolute',
@@ -240,37 +329,6 @@ const Search = () => {
       ) : (
         <></>
       )}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            {
-              backgroundColor:
-                (cityCoordsStart && cityCoordsStart.geometry.length == 0) ||
-                (cityCoordsEnd && cityCoordsEnd.geometry.length) == 0 ||
-                gasTypeValue.length == 0
-                  ? '#C8CCCE'
-                  : '#00A19B',
-            },
-          ]}
-          disabled={
-            (cityCoordsStart && cityCoordsStart.geometry.length == 0) ||
-            (cityCoordsEnd && cityCoordsEnd.geometry.length) == 0 ||
-            gasTypeValue.length == 0
-          }
-          onPress={() => {
-            asyncStorageService.storeGasType(gasTypeValue);
-            navigation.navigate('Map', {
-              start: cityCoordsStart?.geometry,
-              end: cityCoordsEnd?.geometry,
-            });
-          }}>
-          <Image
-            source={require('../../assets/search.png')}
-            style={styles.icon}></Image>
-          <Text style={styles.buttonTitle}>Rechercher</Text>
-        </TouchableOpacity>
-      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -294,7 +352,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonContainer: {
-    top: '80%',
+    top: '30%',
   },
   button: {
     flexDirection: 'row',

@@ -55,4 +55,11 @@ export interface GasPump {
 
 export type CityPosition = {label: string; geometry: string};
 
-export type GasType = 'E10' | 'E5' | 'SP95' | 'SP98' | 'Gazole' | 'Ethanol';
+export type GasType =
+  | 'SP95-E10'
+  | 'E5'
+  | 'SP95-E5'
+  | 'SP98-E5'
+  | 'Gasoil'
+  | 'GPL'
+  | 'Ethanol';
