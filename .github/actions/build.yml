@@ -33,6 +33,8 @@ jobs:
         run: |
           cd android
           ./gradlew build
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
       - name: Build Android JS Bundle
         run: |
           yarn run package-android
