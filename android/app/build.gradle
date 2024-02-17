@@ -103,14 +103,14 @@ def getVersionFromPackageJson() {
     return packageJson["version"]
 }
 
-// def getVersionCodeFromPackageJson() {
-//     //  Read and parse package.json file from project root
-//     def inputFile = new File("$rootDir/../package.json")
-//     def packageJson = new JsonSlurper().parseText(inputFile.text)
+def getVersionCodeFromPackageJson() {
+    //  Read and parse package.json file from project root
+    def inputFile = new File("$rootDir/../package.json")
+    def packageJson = new JsonSlurper().parseText(inputFile.text)
 
-//     // Return the version, you can get any value this way
-//     return packageJson["versionCode"]
-// }
+    // Return the version, you can get any value this way
+    return packageJson["versionCode"]
+}
 
 
 android {
@@ -123,7 +123,7 @@ android {
         applicationId "com.opticarbu"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode getVersionCodeFromPackageJson()
         versionName getVersionFromPackageJson()
     }
         aaptOptions {
