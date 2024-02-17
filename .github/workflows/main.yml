@@ -8,7 +8,7 @@ jobs:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.12.1
       - name: Checkout repo from main branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.0.0
         with:
           ref: build-test
       - name: Install npm dependency
@@ -20,7 +20,7 @@ jobs:
           java-version: '17'
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.0.0
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4.0.0
         with:
           path: |
             ~/.gradle/caches
