@@ -59,6 +59,9 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
+        run: |
+          ls ./android/app/build/outputs/bundle/release
+          chmod x+ ./android/app/build/outputs/bundle/release/app-release.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
