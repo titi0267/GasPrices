@@ -1,13 +1,12 @@
 package com.opticarbu;
 
+import android.os.Bundle;
 import com.facebook.react.ReactActivity;
-import android.content.pm.PackageManager;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 public class MainActivity extends ReactActivity {
-    private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -18,19 +17,9 @@ public class MainActivity extends ReactActivity {
     return "GasPrices";
   }
 
-   @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission granted, you can now proceed with location-related tasks
-                } else {
-                    // Permission denied, handle accordingly (e.g., show a message or disable functionality)
-                }
-                return;
-            }
-            // Add other 'case' blocks if your app requests more permissions
-        }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
   /**

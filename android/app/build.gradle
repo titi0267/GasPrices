@@ -98,12 +98,12 @@ android {
         applicationId "com.opticarbu"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "0.0.2"
+        versionCode 6
+        versionName "0.0.1"
     }
-    //     aaptOptions {
-    //     cruncherEnabled = false
-    // }
+        aaptOptions {
+        cruncherEnabled = false
+    }
 
     splits {
         abi {
@@ -120,33 +120,30 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        // release {
-        //     if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-        //         storeFile file(MYAPP_UPLOAD_STORE_FILE)
-        //         storePassword MYAPP_UPLOAD_STORE_PASSWORD
-        //         keyAlias MYAPP_UPLOAD_KEY_ALIAS
-        //         keyPassword MYAPP_UPLOAD_KEY_PASSWORD
-        //     }
-        // }
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            debuggable true
         }
         release {
-            // ndk {
-            //     debugSymbolLevel 'FULL'
-            // }
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
 
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            // minifyEnabled true
-            // shrinkResources true
-            // signingConfig signingConfigs.release
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 
@@ -166,8 +163,6 @@ android {
         }
     }
 }
-
-
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
