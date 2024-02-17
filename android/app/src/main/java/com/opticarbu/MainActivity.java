@@ -15,6 +15,7 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "GasPrices";
   }
+private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new RequestPermission(), isGranted -> {
 
   if (ContextCompat.checkSelfPermission( this,android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
 {
@@ -24,6 +25,7 @@ public class MainActivity extends ReactActivity {
         LocationService.MY_PERMISSION_ACCESS_COURSE_LOCATION
     );
 }
+})
 
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
