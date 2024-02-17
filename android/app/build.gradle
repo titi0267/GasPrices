@@ -127,7 +127,7 @@ android {
         }
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(myAppUploadStoreFile)
+                storeFile file('my-upload-key.keystore')
                 storePassword myAppUploadStorePassword
                 keyAlias myAppUploadKeyAlias
                 keyPassword myAppUploadKeyPassword

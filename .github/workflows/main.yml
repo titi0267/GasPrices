@@ -18,6 +18,12 @@ jobs:
         with:
           distribution: zulu
           java-version: '17'
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'my-upload-key.keystore'
+          encodedString: ${{ secrets.KEYSTORE }}
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.0.0
       - uses: actions/cache@v4.0.0
