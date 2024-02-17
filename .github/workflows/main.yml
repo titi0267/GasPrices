@@ -7,10 +7,10 @@ jobs:
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.12.1
-      - name: Checkout repo from main branch
-        uses: actions/checkout@v3
-        with:
-          ref: main
+      # - name: Checkout repo from main branch
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: main
       - name: Install npm dependency
         run: npm install
       - name: Setup Android SDK
