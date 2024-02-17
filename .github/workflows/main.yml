@@ -59,9 +59,6 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        run: |
-          ls ./android/app/build/outputs/bundle/release
-          chmod x+ ./android/app/build/outputs/bundle/release/app-release.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -72,8 +69,17 @@ jobs:
             You can use Markdown syntax
           draft: false
           prerelease: false
-          files: |
-            ./android/app/build/outputs/bundle/release/app-release.aab
+      - name: Upload File as Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./android/app/build/outputs/bundle/release # Specify the path to your file
+          asset_name: app-release.aab # Specify the name of the asset
+          asset_content_type: application/octet-stream # Specify the content type of the asset
+
+
       # - name: list
       #   run: |
       #     cd android/app
