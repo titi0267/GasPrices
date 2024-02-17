@@ -1,5 +1,9 @@
-name: Build and deploy for prod
-on: [push]
+name: Build and Release App-bundle
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   android-build:
     name: Android main Build
@@ -10,7 +14,7 @@ jobs:
       - name: Checkout repo from main branch
         uses: actions/checkout@v4.0.0
         with:
-          ref: feat/android-workflow
+          ref: main
       - name: Install npm dependency
         run: npm install
       - name: Set up JDK 17
@@ -56,13 +60,13 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease
-      - name: get version
+      - name: Get package version
         id: version
         uses: notiz-dev/github-action-json-property@release
         with:
           path: 'package.json'
           prop_path: 'version'
-      - name: get version code
+      - name: Get package version code
         id: versionCode
         uses: notiz-dev/github-action-json-property@release
         with:
@@ -72,14 +76,11 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: 'v${{steps.version.outputs.prop}}-${{steps.versionCode.outputs.prop}}'
+          release_name: 'V${{steps.version.outputs.prop}}-${{steps.versionCode.outputs.prop}}'
           file: ./android/app/build/outputs/bundle/release/app-release.aab
           asset_name: app-release.aab
           tag: 'v${{steps.version.outputs.prop}}'
           overwrite: true
           body: |
             Release version ${{steps.version.outputs.prop}}
-            Fix:
-              - Test
-              - Test
-              - Test
+            Fetures:
