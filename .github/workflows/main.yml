@@ -5,9 +5,8 @@ jobs:
     name: Android main Build
     runs-on: ubuntu-latest
     steps:
-      - name: Show self-hosted machine infomation
-        run: uname -a
       - name: Cancel previous runs
+        using: node20
         uses: styfle/cancel-workflow-action@0.9.1
       - name: Checkout repo from main branch
         uses: actions/checkout@v3
@@ -28,11 +27,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Execute Gradle build
+        env: # Or as an environment variable
+          FLIPPER_VERSION: ${{ secrets.FLIPPER_VERSION }}
         run: |
           cd android
           ./gradlew build
-        env:
-          FLIPPER_VERSION: ${{ secrets.FLIPPER_VERSION }}
       - name: Build Android JS Bundle
         run: |
           yarn run package-android
