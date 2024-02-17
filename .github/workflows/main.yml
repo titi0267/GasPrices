@@ -39,7 +39,7 @@ jobs:
           MYAPP_UPLOAD_STORE_PASSWORD: ${{ secrets.MYAPP_UPLOAD_STORE_PASSWORD }}
         run: |
           cd android
-          ./gradlew build
+          ./gradlew bundleRelease
       - name: Build Android JS Bundle
         run: |
           yarn run package-android
