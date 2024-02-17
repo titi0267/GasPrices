@@ -1,6 +1,7 @@
 {
-  "name": "GasPrices",
-  "version": "0.0.1",
+  "name": "gas-prices",
+  "version": "0.0.2",
+  "versionCode": 1,
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -23,7 +24,6 @@
     "react": "18.2.0",
     "react-native": "0.71.7",
     "react-native-dotenv": "^3.4.8",
-    "react-native-element-dropdown": "^2.10.1",
     "react-native-elements": "^3.4.3",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-linking": "^0.0.0",
