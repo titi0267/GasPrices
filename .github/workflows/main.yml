@@ -19,11 +19,13 @@ jobs:
           distribution: zulu
           java-version: '17'
       - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'my-upload-key.keystore'
-          encodedString: ${{ secrets.KEYSTORE }}
+         env:
+           KEYSTORE: ${{ secrets.KEYSTORE }}
+           SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
+         run: |
+           echo $KEYSTORE > keystore-b64.txt
+           base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
+           
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.0.0
       - uses: actions/cache@v4.0.0
@@ -36,6 +38,21 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
+      - name: Build Release apk
+         env:
+           SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
+           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+         run: ./gradlew assembleRelease
+ 
+       - name: Build Release bundle
+         env:
+           SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
+           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+         run: ./gradlew bundleRelease
       - name: Execute Gradle build
         env: # Or as an environment variable
           MAPBOX_DOWNLOADS_TOKEN: ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}

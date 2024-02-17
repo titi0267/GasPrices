@@ -119,15 +119,15 @@ android {
         }
     }
     signingConfigs {
-        debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-        }
+        // debug {
+        //     storeFile file('debug.keystore')
+        //     storePassword 'android'
+        //     keyAlias 'androiddebugkey'
+        //     keyPassword 'android'
+        // }
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file('my-upload-key.keystore')
+                storeFile file('./my-upload-key.keystore')
                 storePassword myAppUploadStorePassword
                 keyAlias myAppUploadKeyAlias
                 keyPassword myAppUploadKeyPassword
@@ -135,9 +135,9 @@ android {
         }
     }
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
+        // debug {
+        //     signingConfig signingConfigs.debug
+        // }
         release {
             ndk {
                 debugSymbolLevel 'FULL'
