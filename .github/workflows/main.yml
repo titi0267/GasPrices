@@ -78,8 +78,8 @@ jobs:
           tag: 'v${{steps.version.outputs.prop}}'
           overwrite: true
           body: |
-            'Release version ${{steps.version.outputs.prop}}'
-            'Fix:
+            Release version ${{steps.version.outputs.prop}}
+            Fix:
               - Test
               - Test
-              - Test'
+              - Test
