@@ -56,15 +56,30 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease
-      - name: list
-        run: |
-          cd android/app
-          ls
-          cd build
-          ls
-          cd outputs
-          ls
-          ls bundle/release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: v1.0.0 # Specify your tag name
+          release_name: Release v1.0.0 # Specify your release name
+          body: |
+            Describe your release here
+            You can use Markdown syntax
+          draft: false
+          prerelease: false
+          files: |
+            ./android/app/build/outputs/bundle/release/app-release.aab
+      # - name: list
+      #   run: |
+      #     cd android/app
+      #     ls
+      #     cd build
+      #     ls
+      #     cd outputs
+      #     ls
+      #     ls bundle/release
 
       # - name: Create Release
       #   id: create_release
