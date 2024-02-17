@@ -1,4 +1,4 @@
-name: Build and Release App-bundle
+name: Develop build
 on:
   push:
     branches:
