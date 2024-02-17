@@ -32,7 +32,6 @@ jobs:
           cd android
           ./gradlew build
         env: |
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
           FLIPPER_VERSION: ${{ secrets.FLIPPER_VERSION }}
       - name: Build Android JS Bundle
         run: |
