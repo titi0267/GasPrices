@@ -1,6 +1,7 @@
 package com.opticarbu;
 
 import com.facebook.react.ReactActivity;
+import android.content.pm.PackageManager;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
