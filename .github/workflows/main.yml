@@ -14,7 +14,7 @@ jobs:
       - name: Install npm dependency
         run: npm install
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3.1.0
+        uses: android-actions/setup-android@v3.0.0
       - uses: actions/cache@v3
         with:
           path: |
