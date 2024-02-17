@@ -56,28 +56,38 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v1.0.0 # Specify your tag name
-          release_name: Release v1.0.0 # Specify your release name
-          body: |
-            Describe your release here
-            You can use Markdown syntax
-          draft: false
-          prerelease: false
-      - name: Upload File as Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./android/app/build/outputs/bundle/release # Specify the path to your file
-          asset_name: app-release.aab # Specify the name of the asset
-          asset_content_type: application/octet-stream # Specify the content type of the asset
+        - name: Upload binaries to release
+          uses: svenstaro/upload-release-action@v2
+          with:
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: ./android/app/build/outputs/bundle/release/app-release.aab
+            asset_name: bundleApk
+            tag: ${{ github.ref }}
+            overwrite: true
+            body: "This is my release text"
+
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: v1.0.0 # Specify your tag name
+      #     release_name: Release v1.0.0 # Specify your release name
+      #     body: |
+      #       Describe your release here
+      #       You can use Markdown syntax
+      #     draft: false
+      #     prerelease: false
+      # - name: Upload File as Release Asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./android/app/build/outputs/bundle/release # Specify the path to your file
+      #     asset_name: app-release.aab # Specify the name of the asset
+      #     asset_content_type: application/octet-stream # Specify the content type of the asset
 
 
       # - name: list
