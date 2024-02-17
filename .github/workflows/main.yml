@@ -32,7 +32,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Execute Gradle build
         env: # Or as an environment variable
-          FLIPPER_VERSION: ${{ secrets.FLIPPER_VERSION }}
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
         run: |
           cd android
           ./gradlew build
