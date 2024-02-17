@@ -58,23 +58,6 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease
-      - name: Build Android JS Bundle
-        run: |
-          yarn run package-android
-      - name: Delete Android build duplicate assets resource
-        run: yarn run delete-pics
-      - name: Install bundler
-        run: |
-          cd android
-          gem install bundler
-      - name: Install gem plugins
-        run: |
-          cd android
-          bundle install
-      - name: Run fastlane
-        run: |
-          cd android
-          bundle exec fastlane build_qa
 
   # ios-build:
   #   name: iOS main Build
