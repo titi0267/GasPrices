@@ -6,6 +6,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 public class MainActivity extends ReactActivity {
+    private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -16,16 +17,20 @@ public class MainActivity extends ReactActivity {
     return "GasPrices";
   }
 
-  private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new RequestPermission(), isGranted -> 
-  {
-    if (ContextCompat.checkSelfPermission( this,android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-      ActivityCompat.requestPermissions(
-        this,
-        new String [] { android.Manifest.permission.ACCESS_COARSE_LOCATION },
-        LocationService.MY_PERMISSION_ACCESS_COURSE_LOCATION
-      );
+   @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_ACCESS_FINE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, you can now proceed with location-related tasks
+                } else {
+                    // Permission denied, handle accordingly (e.g., show a message or disable functionality)
+                }
+                return;
+            }
+            // Add other 'case' blocks if your app requests more permissions
+        }
     }
-  });
 
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
