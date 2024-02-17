@@ -35,6 +35,7 @@ jobs:
           KEYSTORE: ${{ secrets.KEYSTORE }}
           MYAPP_UPLOAD_STORE_FILE: ${{ secrets.MYAPP_UPLOAD_STORE_FILE }}
         run: |
+          cd android/app
           echo $KEYSTORE > keystore-b64.txt
           base64 -d keystore-b64.txt > $MYAPP_UPLOAD_STORE_FILE
       - name:
