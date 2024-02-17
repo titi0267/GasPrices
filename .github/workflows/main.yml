@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repo from main branch
         uses: actions/checkout@v4.0.0
         with:
-          ref: build-test
+          ref: feat/android-workflow
       - name: Install npm dependency
         run: npm install
       - name: Set up JDK 17
