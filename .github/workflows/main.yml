@@ -21,10 +21,10 @@ jobs:
       - name: Decode Keystore
          env:
            KEYSTORE: ${{ secrets.KEYSTORE }}
-           SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
+           MYAPP_UPLOAD_STORE_FILE: ${{ secrets.MYAPP_UPLOAD_STORE_FILE }}
          run: |
            echo $KEYSTORE > keystore-b64.txt
-           base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
+           base64 -d keystore-b64.txt > $MYAPP_UPLOAD_STORE_FILE
            
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.0.0
@@ -39,30 +39,23 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
       - name: Build Release apk
-         env:
-           SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-         run: ./gradlew assembleRelease
- 
+          env:
+            MYAPP_UPLOAD_STORE_FILE: ${{ secrets.MYAPP_UPLOAD_STORE_FILE }}
+            MYAPP_UPLOAD_KEY_ALIAS: ${{ secrets.MYAPP_UPLOAD_KEY_ALIAS }}
+            MYAPP_UPLOAD_KEY_PASSWORD: ${{ secrets.MYAPP_UPLOAD_KEY_PASSWORD }}
+            MYAPP_UPLOAD_STORE_PASSWORD: ${{ secrets.MYAPP_UPLOAD_STORE_PASSWORD }}
+          run: |
+            cd android
+            ./gradlew assembleRelease
        - name: Build Release bundle
-         env:
-           SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-         run: ./gradlew bundleRelease
-      - name: Execute Gradle build
-        env: # Or as an environment variable
-          MAPBOX_DOWNLOADS_TOKEN: ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
-          MYAPP_UPLOAD_KEY_ALIAS: ${{ secrets.MYAPP_UPLOAD_KEY_ALIAS }}
-          MYAPP_UPLOAD_KEY_PASSWORD: ${{ secrets.MYAPP_UPLOAD_KEY_PASSWORD }}
-          MYAPP_UPLOAD_STORE_FILE: ${{ secrets.MYAPP_UPLOAD_STORE_FILE }}
-          MYAPP_UPLOAD_STORE_PASSWORD: ${{ secrets.MYAPP_UPLOAD_STORE_PASSWORD }}
-        run: |
-          cd android
-          ./gradlew bundleRelease
+          env:
+            MYAPP_UPLOAD_STORE_FILE: ${{ secrets.MYAPP_UPLOAD_STORE_FILE }}
+            MYAPP_UPLOAD_KEY_ALIAS: ${{ secrets.MYAPP_UPLOAD_KEY_ALIAS }}
+            MYAPP_UPLOAD_KEY_PASSWORD: ${{ secrets.MYAPP_UPLOAD_KEY_PASSWORD }}
+            MYAPP_UPLOAD_STORE_PASSWORD: ${{ secrets.MYAPP_UPLOAD_STORE_PASSWORD }}
+          run: |
+            cd android
+            ./gradlew bundleRelease
       - name: Build Android JS Bundle
         run: |
           yarn run package-android

@@ -126,12 +126,12 @@ android {
         //     keyPassword 'android'
         // }
         release {
-            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file('./my-upload-key.keystore')
+            // if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(myAppUploadStoreFile)
                 storePassword myAppUploadStorePassword
                 keyAlias myAppUploadKeyAlias
                 keyPassword myAppUploadKeyPassword
-            }
+            // }
         }
     }
     buildTypes {
