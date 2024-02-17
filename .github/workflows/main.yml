@@ -37,6 +37,8 @@ jobs:
         run: |
           echo $KEYSTORE > keystore-b64.txt
           base64 -d keystore-b64.txt > $MYAPP_UPLOAD_STORE_FILE
+      - name:
+        run: ls
       - name: Build Release apk
         env:
           MYAPP_UPLOAD_STORE_FILE: ${{ secrets.MYAPP_UPLOAD_STORE_FILE }}
