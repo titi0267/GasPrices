@@ -1,6 +1,7 @@
 {
   "name": "GasPrices",
   "version": "0.0.1",
+  "versionCode":"6",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

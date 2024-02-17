@@ -56,105 +56,27 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: get version
+        id: version
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: 'package.json'
+          prop_path: 'version'
+      - name: get version code
+        id: versionCode
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: 'package.json'
+          prop_path: 'versionCode'
       - name: Upload App bundle to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: ${{ steps.package-version.outputs.current-version}}
+          release_name: 'V${{steps.version.outputs.prop}}'
           file: ./android/app/build/outputs/bundle/release/app-release.aab
           asset_name: app-release.aab
           tag: ${{ github.ref }}
           overwrite: true
-          body: 'This is my release text'
-
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: v1.0.0 # Specify your tag name
-      #     release_name: Release v1.0.0 # Specify your release name
-      #     body: |
-      #       Describe your release here
-      #       You can use Markdown syntax
-      #     draft: false
-      #     prerelease: false
-      # - name: Upload File as Release Asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./android/app/build/outputs/bundle/release # Specify the path to your file
-      #     asset_name: app-release.aab # Specify the name of the asset
-      #     asset_content_type: application/octet-stream # Specify the content type of the asset
-
-      # - name: list
-      #   run: |
-      #     cd android/app
-      #     ls
-      #     cd build
-      #     ls
-      #     cd outputs
-      #     ls
-      #     ls bundle/release
-
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     body: |
-      #       Changes in this Release
-      #       - First Change
-      #       - Second Change
-      #     draft: false
-      #     prerelease: false
-
-  # ios-build:
-  #   name: iOS main Build
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Show self-hosted machine infomation
-  #       run: uname -a
-  #     - name: Cancel previous runs
-  #       uses: styfle/cancel-workflow-action@0.9.1
-  #     - name: Checkout repo from main branch
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: main
-  #     - name: Install npm dependency
-  #       run: yarn install
-  #     - name: Cache cocoapods
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: /ios/Pods
-  #         key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pods-
-  #     - name: Install pod dependency
-  #       run: |
-  #         cd ios
-  #         bundle exec pod install
-  #     - name: Build iOS JS Bundle
-  #       run: |
-  #         yarn run package-ios
-  #     - name: Install bundler
-  #       run: |
-  #         cd ios
-  #         gem install bundler
-  #     - name: Install gem plugins
-  #       run: |
-  #         cd ios
-  #         bundle install
-  #     - name: Run fastlane
-  #       run: |
-  #         cd ios
-  #         bundle exec fastlane build_testflight
+          body: |
+            'Release version ${{steps.version.outputs.prop}}'
+            'Version code ${{steps.versionCode.outputs.prop}}'
