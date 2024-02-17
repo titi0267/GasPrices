@@ -72,11 +72,14 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: 'V${{steps.version.outputs.prop}}'
+          release_name: 'v${{steps.version.outputs.prop}}-${{steps.versionCode.outputs.prop}}'
           file: ./android/app/build/outputs/bundle/release/app-release.aab
           asset_name: app-release.aab
-          tag: ${{ github.ref }}
+          tag: 'v${{steps.version.outputs.prop}}'
           overwrite: true
           body: |
             'Release version ${{steps.version.outputs.prop}}'
-            'Version code ${{steps.versionCode.outputs.prop}}'
+            'Fix:
+              - Test
+              - Test
+              - Test'
