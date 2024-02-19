@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repo from main branch
         uses: actions/checkout@v4.0.0
         with:
-          ref: main
+          ref: develop
       - name: Install npm dependency
         run: npm install
       - name: Set up JDK 17
@@ -66,15 +66,3 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease
-      - name: Upload App bundle to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: 'V${{steps.version.outputs.prop}}-${{steps.versionCode.outputs.prop}}'
-          file: ./android/app/build/outputs/apk/release/app-release.apk
-          asset_name: app-release.apk
-          tag: 'v${{steps.version.outputs.prop}}'
-          overwrite: true
-          body: |
-            Release version ${{steps.version.outputs.prop}}
-            Fetures:
