@@ -95,20 +95,16 @@ def myAppUploadKeyPassword = System.getenv("MYAPP_UPLOAD_KEY_PASSWORD")
 
 
 def getVersionFromPackageJson() {
-    //  Read and parse package.json file from project root
     def inputFile = new File("$rootDir/../package.json")
     def packageJson = new JsonSlurper().parseText(inputFile.text)
 
-    // Return the version, you can get any value this way
     return packageJson["version"]
 }
 
 def getVersionCodeFromPackageJson() {
-    //  Read and parse package.json file from project root
     def inputFile = new File("$rootDir/../package.json")
     def packageJson = new JsonSlurper().parseText(inputFile.text)
 
-    // Return the version, you can get any value this way
     return packageJson["versionCode"]
 }
 
@@ -161,8 +157,6 @@ android {
                 debugSymbolLevel 'FULL'
             }
 
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.release

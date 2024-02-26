@@ -90,3 +90,4 @@ jobs:
           body: |
             Release version ${{steps.version.outputs.prop}}
             Fetures:
+              - Alert users that an update is available
