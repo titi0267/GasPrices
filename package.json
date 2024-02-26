@@ -1,10 +1,10 @@
 {
   "name": "gas-prices",
-  "version": "0.0.2",
-  "versionCode": 8,
+  "version": "0.0.3",
+  "versionCode": 9,
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --variant=debug",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
