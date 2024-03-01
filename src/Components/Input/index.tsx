@@ -11,8 +11,10 @@ const CustomInput = (props: {
   onChangeText: (value: string) => void;
   placeholder: string;
   inputValue?: string;
+  setIsFocused: (value: boolean) => void;
 }) => {
-  const {onClearInput, onChangeText, placeholder, inputValue} = props;
+  const {onClearInput, onChangeText, placeholder, inputValue, setIsFocused} =
+    props;
   return (
     <View style={inputStyles.container}>
       <TouchableOpacity
@@ -25,6 +27,12 @@ const CustomInput = (props: {
         />
       </TouchableOpacity>
       <TextInput
+        onBlur={() => {
+          setIsFocused(false);
+        }}
+        onFocus={() => {
+          setIsFocused(true);
+        }}
         style={[inputStyles.placeholder, inputStyles.input]}
         placeholder={placeholder}
         value={inputValue}
