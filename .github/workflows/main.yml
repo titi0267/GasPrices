@@ -90,4 +90,7 @@ jobs:
           body: |
             Release version ${{steps.version.outputs.prop}}
             Fetures:
-              - Alert users that an update is available
+              - Itinerary from users position
+              - User shown on the map
+            Fix:
+              - Itinerary infite loading
