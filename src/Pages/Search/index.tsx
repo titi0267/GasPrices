@@ -27,12 +27,16 @@ import {FuelAssociation} from '../../assets/Fuels';
 const Search = () => {
   const navigation = useNavigation<StackNavigationProp<BottomTabParamList>>();
 
-  const [cityNamesStart, setCityNamesStart] = useState<string[]>([]);
+  const [cityNamesStart, setCityNamesStart] = useState<string[]>([
+    'Votre position',
+  ]);
   const [cityCoordsStart, setCityCoordsStart] = useState<CityPosition | null>(
     null,
   );
   const [inputValueStart, setInputValueStart] = useState('');
-  const [cityNamesEnd, setCityNamesEnd] = useState<string[]>([]);
+  const [cityNamesEnd, setCityNamesEnd] = useState<string[]>([
+    'Votre position',
+  ]);
   const [cityCoordsEnd, setCityCoordsEnd] = useState<CityPosition | null>(null);
   const [inputValueEnd, setInputValueEnd] = useState('');
 
@@ -43,9 +47,18 @@ const Search = () => {
   const [isFetchStart, setIsFetchStart] = useState(false);
   const [isFetchEnd, setIsFetchEnd] = useState(false);
   const [selectedFuel, setSelectedFuel] = useState<GasType | null>(null);
+  const [startIsFocused, setStartIsFocused] = useState(false);
+  const [endIsFocused, setEndIsFocused] = useState(false);
 
   const setLocationCallback = (value: LocationType | string) => {
     setLocation(value as string);
+  };
+
+  const setStartIsFocusedCallback = (value: boolean) => {
+    setStartIsFocused(value);
+  };
+  const setEndIsFocusedCallback = (value: boolean) => {
+    setEndIsFocused(value);
   };
 
   useEffect(() => {
@@ -102,6 +115,9 @@ const Search = () => {
           setIsFetchStartCallback,
         );
       }
+      if (inputValueStart.length == 0) {
+        setIsFetchStart(false);
+      }
     }, 400);
     return () => clearTimeout(debounceTimer);
   }, [inputValueStart, isStartCitySelected]);
@@ -118,6 +134,9 @@ const Search = () => {
           cityNamesEndCallback,
           setIsFetchEndCallback,
         );
+      if (inputValueEnd.length == 0) {
+        setIsFetchEnd(false);
+      }
     }, 400);
     return () => clearTimeout(debounceTimer);
   }, [inputValueEnd, isEndCitySelected]);
@@ -131,7 +150,14 @@ const Search = () => {
     setIsStartCitySelected(true);
     setInputValueStart(item);
     setCityNamesStart([]);
-    fetchCityPosition({adress: item}, setCityCoordsStartCallback);
+    if (item == 'Votre position') {
+      let values: string[] = location.split(',');
+
+      let invertedValues: string = values.reverse().join(',');
+      setCityCoordsStart({label: 'Votre position', geometry: invertedValues});
+    } else {
+      fetchCityPosition({adress: item}, setCityCoordsStartCallback);
+    }
   };
 
   const onPressItemEnd = (item: string) => {
@@ -139,20 +165,30 @@ const Search = () => {
     setIsEndCitySelected(true);
     setInputValueEnd(item);
     setCityNamesEnd([]);
-    fetchCityPosition({adress: item}, setCityCoordsEndCallback);
+    if (item == 'Votre position') {
+      let values: string[] = location.split(',');
+
+      let invertedValues: string = values.reverse().join(',');
+      setCityCoordsEnd({label: 'Votre position', geometry: invertedValues});
+    } else {
+      fetchCityPosition({adress: item}, setCityCoordsEndCallback);
+    }
   };
 
   const onClearInputStart = () => {
     setIsStartCitySelected(false);
     setInputValueStart('');
-    setCityNamesStart([]);
+    Keyboard.dismiss();
+    setStartIsFocused(false);
+    setCityNamesStart(['Votre position']);
     setCityCoordsStart(null);
   };
 
   const onClearInputEnd = () => {
     setIsEndCitySelected(false);
+    Keyboard.dismiss();
     setInputValueEnd('');
-    setCityNamesEnd([]);
+    setCityNamesEnd(['Votre position']);
     setCityCoordsEnd(null);
   };
 
@@ -268,6 +304,7 @@ const Search = () => {
           onChangeText={onChangeTextStart}
           onClearInput={onClearInputStart}
           placeholder="Depart"
+          setIsFocused={setStartIsFocusedCallback}
           inputValue={inputValueStart}></CustomInput>
       </View>
       <View
@@ -287,9 +324,10 @@ const Search = () => {
           onChangeText={onChangeTextEnd}
           onClearInput={onClearInputEnd}
           placeholder="Arrivee"
+          setIsFocused={setEndIsFocusedCallback}
           inputValue={inputValueEnd}></CustomInput>
       </View>
-      {cityNamesStart.length != 0 ? (
+      {cityNamesStart.length != 0 && startIsFocused ? (
         <View
           style={[
             {
@@ -309,7 +347,7 @@ const Search = () => {
       ) : (
         <></>
       )}
-      {cityNamesEnd.length != 0 ? (
+      {cityNamesEnd.length != 0 && endIsFocused ? (
         <View
           style={[
             {

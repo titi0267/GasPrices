@@ -1,4 +1,4 @@
-import {HOST} from '@env';
+import Config from 'react-native-config';
 import {CityPosition} from '../Types';
 
 const fetchCityNames = async (
@@ -7,7 +7,7 @@ const fetchCityNames = async (
   setLoading: (value: boolean) => void,
 ) => {
   setLoading(true);
-  const res = await fetch(`${HOST}/cityName`, {
+  const res = await fetch(`${Config.HOST}/cityName`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ const fetchCityPosition = async (
   body: {adress: string},
   setPosition: (value: {label: string; geometry: string}) => void,
 ) => {
-  const res = await fetch(`${HOST}/cityData`, {
+  const res = await fetch(`${Config.HOST}/cityData`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
