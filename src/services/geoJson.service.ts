@@ -1,4 +1,4 @@
-import {HOST} from '@env';
+import Config from 'react-native-config';
 
 const fetchGeoJsonResults = async (
   body: {
@@ -6,17 +6,23 @@ const fetchGeoJsonResults = async (
     end: string;
   },
   setData: (value: any) => void,
+  setIsLoading: (value: boolean) => void,
 ) => {
-  const res = await fetch(`${HOST}/geoJson`, {
+  console.log(body);
+  const res = await fetch(`${Config.HOST}/geoJson`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw Error('Error on osrm services');
-  const resolve = await res.json();
-  setData(resolve[0]);
+  try {
+    if (!res.ok) throw Error('Error on osrm services');
+    const resolve = await res.json();
+    setData(resolve[0]);
+  } catch (e) {
+    setIsLoading(false);
+  }
 };
 
 export default fetchGeoJsonResults;

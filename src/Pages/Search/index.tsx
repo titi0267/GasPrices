@@ -151,7 +151,10 @@ const Search = () => {
     setInputValueStart(item);
     setCityNamesStart([]);
     if (item == 'Votre position') {
-      setCityCoordsStart({label: 'Votre position', geometry: location});
+      let values: string[] = location.split(',');
+
+      let invertedValues: string = values.reverse().join(',');
+      setCityCoordsStart({label: 'Votre position', geometry: invertedValues});
     } else {
       fetchCityPosition({adress: item}, setCityCoordsStartCallback);
     }
@@ -163,7 +166,10 @@ const Search = () => {
     setInputValueEnd(item);
     setCityNamesEnd([]);
     if (item == 'Votre position') {
-      setCityCoordsEnd({label: 'Votre position', geometry: location});
+      let values: string[] = location.split(',');
+
+      let invertedValues: string = values.reverse().join(',');
+      setCityCoordsEnd({label: 'Votre position', geometry: invertedValues});
     } else {
       fetchCityPosition({adress: item}, setCityCoordsEndCallback);
     }
