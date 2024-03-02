@@ -37,10 +37,11 @@ In order to use Gas Prices, you must have Android studio on your computer ([Inst
    ```.env
     HOST=https://gas-price-france-yaws.vercel.app/
    ```
+
    OR
 
    - You can use it on local, follow [GasPrices-Api](https://github.com/titi0267/GasPrices-Api) guidelines
-     
+
    ```.env
     HOST=http://localhost:8080
    ```
@@ -57,13 +58,13 @@ In order to use Gas Prices, you must have Android studio on your computer ([Inst
    MAPBOX_API_KEY=
    ```
 
-4. Install the dependencies with npm
+3. Install the dependencies with npm
 
    ```bash
    npm i
    ```
 
-5. Extra steps for a physical device:
+4. Extra steps for a physical device:
    - Connect your device to your computer
    - Make sure to enable developer mode
    - Make sure to enable file transfert
@@ -75,13 +76,13 @@ Launch the project with
 
 ## Overview
 
-Navigate on the map | Search for your itinerary & your fuel | Display the gas stations along your itinerary
- --- | --- | ---
-<img src="src/assets//ReadMe/map-page.png" alt="Image 1" width="300"> | <img src="src/assets//ReadMe/search-page.png" alt="Image 2" width="300"> | <img src="src/assets//ReadMe/pumps-on-map.png" alt="Image 1" width="300">
+| Navigate on the map                                                   | Search for your itinerary & your fuel                                    | Display the gas stations along your itinerary                             |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| <img src="src/assets//ReadMe/map-page.png" alt="Image 1" width="300"> | <img src="src/assets//ReadMe/search-page.png" alt="Image 2" width="300"> | <img src="src/assets//ReadMe/pumps-on-map.png" alt="Image 1" width="300"> |
 
-Click on one of the gas station | Check the lowest price | Redirect to maps and start driving
---- | --- | ---
- <img src="src/assets//ReadMe/click-on-pump.png" alt="Image 2" width="300"> | <img src="src/assets//ReadMe/pump-data.png" alt="Image 1" width="300"> | <img src="src/assets//ReadMe/redirect-to-maps.png" alt="Image 2" width="300">
+| Click on one of the gas station                                            | Check the lowest price                                                 | Redirect to maps and start driving                                            |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| <img src="src/assets//ReadMe/click-on-pump.png" alt="Image 2" width="300"> | <img src="src/assets//ReadMe/pump-data.png" alt="Image 1" width="300"> | <img src="src/assets//ReadMe/redirect-to-maps.png" alt="Image 2" width="300"> |
 
 ## About
 

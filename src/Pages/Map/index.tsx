@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {JAWG_API_KEY, MAPBOX_API_KEY} from '@env';
 import {useEffect, useRef, useState} from 'react';
 import {useIsFocused, useRoute} from '@react-navigation/native';
 import getLocation from '../../services/getCurrentLocation';
@@ -18,8 +17,10 @@ import departmentCodeService from '../../services/departmentCode.service';
 import gasStationsService from '../../services/gasStations.service';
 import asyncStorageService from '../../services/asyncStorage.service';
 import CustomCard from '../../Components/Card';
+import circle from '@turf/circle';
+import Config from 'react-native-config';
 
-Mapbox.setAccessToken(MAPBOX_API_KEY);
+Mapbox.setAccessToken(Config.MAPBOX_API_KEY as string);
 
 const Map = () => {
   const route = useRoute();
@@ -39,6 +40,7 @@ const Map = () => {
   const [refinedStations, setRefinedStations] = useState<GasPump[] | null>(
     null,
   );
+  const [radius, setRadius] = useState(Math.pow(2, zoomLevel) * 100);
   const [isLoading, setIsLoading] = useState(true);
   const [departmentCodes, setDepartmentCodes] = useState<string[]>([]);
   const [gasType, setGasType] = useState<GasType | null>();
@@ -76,6 +78,7 @@ const Map = () => {
           end: end,
         },
         setGeoJson,
+        setIsLoading,
       );
     } else {
       setIsLoading(false);
@@ -101,7 +104,12 @@ const Map = () => {
   }, [geoJson]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      getLocation(setLocationCallback, 'object');
+    }, 20000);
     getLocation(setLocationCallback, 'object');
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -152,6 +160,14 @@ const Map = () => {
     }
   }, [gasStations, gasType]);
 
+  const layerStyles = {
+    route: {
+      lineColor: '#00F5FD',
+      lineWidth: 1.5,
+      lineDasharray: [1, 0],
+    },
+  };
+
   useEffect(() => {
     if (refinedStations) {
       asyncStorageService.storeData('gasPumps', refinedStations as any[]);
@@ -162,6 +178,15 @@ const Map = () => {
     }
   }, [refinedStations, end, start]);
 
+  const handleRegionDidChange = async () => {
+    if (mapRef.current) {
+      const zoomLevel = await mapRef.current.getZoom();
+      console.log('Zoom level:', zoomLevel);
+      const radius = Math.pow(2, -zoomLevel) * 1000;
+      setRadius(radius > 0.5 ? 0.5 : radius);
+    }
+  };
+
   return (
     <View style={styles.page}>
       <Mapbox.MapView
@@ -169,11 +194,28 @@ const Map = () => {
         ref={mapRef}
         logoEnabled={false}
         attributionEnabled={false}
-        styleURL={`https://tile.jawg.io/jawg-streets.json?access-token=${JAWG_API_KEY}`}>
+        onRegionIsChanging={handleRegionDidChange}
+        styleURL={`https://tile.jawg.io/jawg-streets.json?access-token=${Config.JAWG_API_KEY}`}>
         {isLoading == false || (!end && !start) ? (
           <Mapbox.Camera
             centerCoordinate={[location.longitude, location.latitude]}
             zoomLevel={mapRef.current ? zoomLevel : 0}></Mapbox.Camera>
+        ) : (
+          <></>
+        )}
+        {location ? (
+          <Mapbox.ShapeSource
+            id="radiusSource"
+            shape={circle([location.longitude, location.latitude], radius, {
+              steps: 64,
+            })}>
+            <Mapbox.FillLayer id="radiusFill" style={{fillColor: '#001BFD'}} />
+            <Mapbox.LineLayer
+              id="radiusOutline"
+              style={layerStyles.route}
+              aboveLayerID="radiusFill"
+            />
+          </Mapbox.ShapeSource>
         ) : (
           <></>
         )}
