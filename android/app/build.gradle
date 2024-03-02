@@ -142,27 +142,27 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        // release {
-        //         storeFile file(myAppUploadStoreFile)
-        //         storePassword myAppUploadStorePassword
-        //         keyAlias myAppUploadKeyAlias
-        //         keyPassword myAppUploadKeyPassword
-        // }
+        release {
+                storeFile file(myAppUploadStoreFile)
+                storePassword myAppUploadStorePassword
+                keyAlias myAppUploadKeyAlias
+                keyPassword myAppUploadKeyPassword
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
-        // release {
-        //     ndk {
-        //         debugSymbolLevel 'FULL'
-        //     }
+        release {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
 
-        //     minifyEnabled true
-        //     shrinkResources true
-        //     signingConfig signingConfigs.release
-        //     proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-        // }
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
     }
 
     // applicationVariants are e.g. debug, release
