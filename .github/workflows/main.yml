@@ -90,7 +90,11 @@ jobs:
           body: |
             Release version ${{steps.version.outputs.prop}}
             Fetures:
+<<<<<<< HEAD
               - Itinerary from users position
               - User shown on the map
             Fix:
               - Itinerary infite loading
+=======
+              - Alert users that an update is available
+>>>>>>> b00c71c69e629d08113a52efb9e1e846eb9b2339

@@ -1,7 +1,12 @@
 {
   "name": "gas-prices",
+<<<<<<< HEAD
   "version": "0.0.4",
   "versionCode": 10,
+=======
+  "version": "0.0.3",
+  "versionCode": 9,
+>>>>>>> b00c71c69e629d08113a52efb9e1e846eb9b2339
   "private": true,
   "scripts": {
     "android": "react-native run-android --variant=debug",
