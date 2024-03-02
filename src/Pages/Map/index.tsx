@@ -104,7 +104,12 @@ const Map = () => {
   }, [geoJson]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      getLocation(setLocationCallback, 'object');
+    }, 20000);
     getLocation(setLocationCallback, 'object');
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
