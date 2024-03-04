@@ -1,9 +1,9 @@
-import Config from 'react-native-config';
+import {HOST} from '@env';
 
 const updateApp = async (setVersion: (value: any) => void) => {
   const pj = require('../../package.json');
   const body = {version: pj.version};
-  const res = await fetch(`${Config.HOST}/update`, {
+  const res = await fetch(`${HOST}/update`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

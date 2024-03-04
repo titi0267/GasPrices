@@ -18,9 +18,9 @@ import gasStationsService from '../../services/gasStations.service';
 import asyncStorageService from '../../services/asyncStorage.service';
 import CustomCard from '../../Components/Card';
 import circle from '@turf/circle';
-import Config from 'react-native-config';
+import {JAWG_API_KEY, MAPBOX_API_KEY} from '@env';
 
-Mapbox.setAccessToken(Config.MAPBOX_API_KEY as string);
+Mapbox.setAccessToken(MAPBOX_API_KEY as string);
 
 const Map = () => {
   const route = useRoute();
@@ -195,7 +195,7 @@ const Map = () => {
         logoEnabled={false}
         attributionEnabled={false}
         onRegionIsChanging={handleRegionDidChange}
-        styleURL={`https://tile.jawg.io/jawg-streets.json?access-token=${Config.JAWG_API_KEY}`}>
+        styleURL={`https://tile.jawg.io/jawg-streets.json?access-token=${JAWG_API_KEY}`}>
         {isLoading == false || (!end && !start) ? (
           <Mapbox.Camera
             centerCoordinate={[location.longitude, location.latitude]}

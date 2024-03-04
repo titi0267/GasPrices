@@ -89,8 +89,9 @@ jobs:
           overwrite: true
           body: |
             Release version ${{steps.version.outputs.prop}}
-            Fetures:
+            Features:
               - Itinerary from users position
               - User shown on the map
             Fix:
               - Itinerary infite loading
+              - Secrets not loading

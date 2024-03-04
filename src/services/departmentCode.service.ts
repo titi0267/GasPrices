@@ -1,9 +1,9 @@
-import Config from 'react-native-config';
+import {HOST} from '@env';
 
 const fetchDepartmentCode = async (body: {
   coords: number[];
 }): Promise<string> => {
-  const res = await fetch(`${Config.HOST}/geoCode`, {
+  const res = await fetch(`${HOST}/geoCode`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

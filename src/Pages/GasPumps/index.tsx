@@ -1,20 +1,11 @@
-import {
-  FlatList,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {Card, Button} from 'react-native-paper';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import CustomCard from '../../Components/Card';
-import {useIsFocused, useRoute} from '@react-navigation/native';
-import {GasPump, GasPumpFields, GasPumpsRouteParams} from '../../Types';
+import {useIsFocused} from '@react-navigation/native';
+import {GasPump, GasPumpFields} from '../../Types';
 import {useEffect, useState} from 'react';
 import asyncStorageService from '../../services/asyncStorage.service';
 
 const GasPumps = () => {
-  const route = useRoute();
   const [gasStations, setGasStations] = useState<Array<GasPump>>([]);
   const [gasType, setGasType] = useState<string | null>(null);
   const isFocused = useIsFocused();
