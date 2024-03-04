@@ -1,4 +1,4 @@
-import Config from 'react-native-config';
+import {HOST} from '@env';
 
 const fetchGeoJsonResults = async (
   body: {
@@ -9,7 +9,7 @@ const fetchGeoJsonResults = async (
   setIsLoading: (value: boolean) => void,
 ) => {
   console.log(body);
-  const res = await fetch(`${Config.HOST}/geoJson`, {
+  const res = await fetch(`${HOST}/geoJson`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
-import Config from 'react-native-config';
+import {HOST} from '@env';
 
 const fetchGasStationList = async (body: {code_department: string}) => {
-  const res = await fetch(`${Config.HOST}/gasStations`, {
+  const res = await fetch(`${HOST}/gasStations`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
